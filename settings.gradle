@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'trading-machine'
+
+includeBuild('trading-machine-conventions') {
+    name = 'trading-machine-conventions'
+}
+
+include 'trading-machine-platform',
+        'trading-machine-app',
+        'trading-machine-web',
+        'trading-machine-fat-client',
+        'trading-machine-service',
+        'trading-machine-algos',
+        'trading-machine-tws-api',
+        'trading-machine-tws-connector',
+        'trading-machine-frontend'

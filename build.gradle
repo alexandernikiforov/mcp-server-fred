@@ -1,0 +1,57 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.6' apply false
+    id 'com.github.node-gradle.node' version '7.0.2' apply false
+    id 'org.unbroken-dome.test-sets' version '4.1.0' apply false
+    id 'org.openapi.generator' version '7.16.0' apply false
+    id "org.springdoc.openapi-gradle-plugin" version '1.9.0' apply false
+    id 'org.openjfx.javafxplugin' version '0.1.0' apply false
+    id 'org.javamodularity.moduleplugin' version '1.8.15' apply false
+
+    id 'base'
+    id 'jacoco-report-aggregation'
+    id 'test-report-aggregation'
+}
+
+wrapper {
+    gradleVersion = '9.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// configure test aggregation
+dependencies {
+//    jacocoAggregation project(':cert-blues-azure')
+//    jacocoAggregation project(':cert-blues-acme')
+//    jacocoAggregation project(':cert-blues-certbot')
+//
+//    testReportAggregation project(':cert-blues-azure')
+//    testReportAggregation project(':cert-blues-acme')
+//    testReportAggregation project(':cert-blues-certbot')
+}
+
+allprojects {
+    group = 'ch.alni'
+    version = '1.0.0-SNAPSHOT'
+
+    ext {
+        buildNumber = System.getenv('TRAVIS') ? System.getenv('TRAVIS_BUILD_NUMBER') : '0'
+        buildVersion = version + '.' + buildNumber
+    }
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = "test"
+        }
+        testAggregateTestReport(AggregateTestReport) {
+            testSuiteName = "test"
+        }
+    }
+}
+
+tasks.check.dependsOn(
+        tasks.named('testCodeCoverageReport', JacocoReport), tasks.named('testAggregateTestReport', TestReport)
+)
