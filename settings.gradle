@@ -4,18 +4,11 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'trading-machine'
+rootProject.name = 'mcp-server-fred'
 
-includeBuild('trading-machine-conventions') {
-    name = 'trading-machine-conventions'
+includeBuild('mcp-server-fred-conventions') {
+    name = 'mcp-server-fred-conventions'
 }
 
-include 'trading-machine-platform',
-        'trading-machine-app',
-        'trading-machine-web',
-        'trading-machine-fat-client',
-        'trading-machine-service',
-        'trading-machine-algos',
-        'trading-machine-tws-api',
-        'trading-machine-tws-connector',
-        'trading-machine-frontend'
+include 'mcp-server-fred-platform',
+        'mcp-server-fred-app'

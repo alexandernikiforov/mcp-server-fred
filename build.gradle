@@ -1,11 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.6' apply false
-    id 'com.github.node-gradle.node' version '7.0.2' apply false
-    id 'org.unbroken-dome.test-sets' version '4.1.0' apply false
-    id 'org.openapi.generator' version '7.16.0' apply false
-    id "org.springdoc.openapi-gradle-plugin" version '1.9.0' apply false
-    id 'org.openjfx.javafxplugin' version '0.1.0' apply false
-    id 'org.javamodularity.moduleplugin' version '1.8.15' apply false
+    id 'org.springframework.boot' version '4.0.2' apply false
 
     id 'base'
     id 'jacoco-report-aggregation'
@@ -13,7 +7,7 @@ plugins {
 }
 
 wrapper {
-    gradleVersion = '9.1.0'
+    gradleVersion = '9.3.1'
 }
 
 repositories {
@@ -36,7 +30,7 @@ allprojects {
     version = '1.0.0-SNAPSHOT'
 
     ext {
-        buildNumber = System.getenv('TRAVIS') ? System.getenv('TRAVIS_BUILD_NUMBER') : '0'
+        buildNumber = System.getenv('CI') ? System.getenv('CI_BUILD_NUMBER') : '0'
         buildVersion = version + '.' + buildNumber
     }
 }

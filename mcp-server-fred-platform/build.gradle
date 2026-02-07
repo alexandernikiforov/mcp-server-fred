@@ -11,17 +11,12 @@ javaPlatform {
 
 dependencies {
     constraints {
-        api 'com.google.auto.value:auto-value-annotations:1.10.1'
-        api 'com.google.auto.value:auto-value:1.10.1'
-
         api 'org.jetbrains:annotations:24.0.1'
 
         api(group: 'com.google.guava', name: 'guava', version: '31.0.1-jre')
-        api('org.springdoc:springdoc-openapi-starter-webflux-ui:2.1.0')
         api('io.swagger.core.v3:swagger-annotations-jakarta:2.2.9')
 
         api('org.projectlombok:lombok:1.18.32')
-        api('org.controlsfx:controlsfx:11.2.1')
     }
 
     api platform(SpringBootPlugin.BOM_COORDINATES)

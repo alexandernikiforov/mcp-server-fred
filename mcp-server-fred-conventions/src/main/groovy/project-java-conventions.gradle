@@ -5,15 +5,11 @@ plugins {
 
 repositories {
     mavenCentral()
-
-    flatDir {
-        dirs "${rootDir}/lib"
-    }
 }
 
 java {
-    targetCompatibility = JavaVersion.VERSION_21
-    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava {
@@ -29,13 +25,13 @@ test {
 }
 
 dependencies {
-    implementation platform(project(':trading-machine-platform'))
-    compileOnly platform(project(':trading-machine-platform'))
-    annotationProcessor platform(project(':trading-machine-platform'))
+    implementation platform(project(':mcp-server-fred-platform'))
+    compileOnly platform(project(':mcp-server-fred-platform'))
+    annotationProcessor platform(project(':mcp-server-fred-platform'))
 
-    testImplementation platform(project(':trading-machine-platform'))
-    testCompileOnly platform(project(':trading-machine-platform'))
-    testAnnotationProcessor platform(project(':trading-machine-platform'))
+    testImplementation platform(project(':mcp-server-fred-platform'))
+    testCompileOnly platform(project(':mcp-server-fred-platform'))
+    testAnnotationProcessor platform(project(':mcp-server-fred-platform'))
 
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core'
@@ -44,6 +40,6 @@ dependencies {
     testCompileOnly 'org.slf4j:slf4j-api'
     testRuntimeOnly 'ch.qos.logback:logback-classic'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

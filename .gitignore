@@ -13,5 +13,3 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
-
-/trading-machine-service/src/integrationTest/resources/trading-bot-data/
