@@ -7,17 +7,21 @@ dependencies {
     compileOnly 'org.jetbrains:annotations'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
 
+    annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    testAnnotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-webclient'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webflux'
 
-//    developmentOnly 'org.springframework.boot:spring-boot-devtools:3.2.4'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.squareup.okhttp3:mockwebserver3'
+    testImplementation 'io.projectreactor:reactor-test'
+
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
 springBoot {

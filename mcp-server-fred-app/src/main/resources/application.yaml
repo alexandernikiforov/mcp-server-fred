@@ -1,0 +1,10 @@
+spring:
+  ai:
+    mcp:
+      server:
+        # building the server addressed over Streamable HTTP
+        protocol: streamable
+
+fred:
+  client:
+    base-url: https://api.stlouisfed.org/

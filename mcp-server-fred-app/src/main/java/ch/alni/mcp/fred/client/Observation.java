@@ -1,0 +1,23 @@
+package ch.alni.mcp.fred.client;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDate;
+
+/**
+ * A single observation.
+ *
+ * @param realtimeStart
+ * @param realtimeEnd
+ * @param date
+ * @param value
+ */
+public record Observation(
+        @JsonProperty("realtime_start")
+        LocalDate realtimeStart,
+        @JsonProperty("realtime_end")
+        LocalDate realtimeEnd,
+        LocalDate date,
+        double value
+) {
+}
