@@ -16,13 +16,8 @@ repositories {
 
 // configure test aggregation
 dependencies {
-//    jacocoAggregation project(':cert-blues-azure')
-//    jacocoAggregation project(':cert-blues-acme')
-//    jacocoAggregation project(':cert-blues-certbot')
-//
-//    testReportAggregation project(':cert-blues-azure')
-//    testReportAggregation project(':cert-blues-acme')
-//    testReportAggregation project(':cert-blues-certbot')
+    jacocoAggregation project(':mcp-server-fred-app')
+    testReportAggregation project(':mcp-server-fred-app')
 }
 
 allprojects {
