@@ -1,5 +1,6 @@
 package ch.alni.mcp.fred.client;
 
+import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @ComponentScan
 @Configuration
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = {McpServerAutoConfiguration.class})
 class FredClientServiceTestConfiguration {
 
     @Bean

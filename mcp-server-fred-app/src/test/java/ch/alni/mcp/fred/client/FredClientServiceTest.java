@@ -58,6 +58,7 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
         assertThat(recordedRequest).isNotNull();
 
         assertThat(recordedRequest.getUrl().host()).isEqualTo("localhost");
+        assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(FredClientPaths.OBSERVATIONS_URL);
         assertThat(recordedRequest.getMethod()).isEqualTo("GET");
         assertThat(recordedRequest.getRequestLine())
                 .contains("series_id=" + SERIES_ID)

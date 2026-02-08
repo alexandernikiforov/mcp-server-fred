@@ -1,9 +1,6 @@
 package ch.alni.mcp.fred.client.impl;
 
-import ch.alni.mcp.fred.client.FileType;
-import ch.alni.mcp.fred.client.FredClientService;
-import ch.alni.mcp.fred.client.ObservationsRequest;
-import ch.alni.mcp.fred.client.ObservationsResponse;
+import ch.alni.mcp.fred.client.*;
 import ch.alni.mcp.fred.client.config.FredClientProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,7 +10,6 @@ import java.util.Optional;
 
 @Service
 class FredClientServiceImpl implements FredClientService {
-    public static final String OBSERVATIONS_URL = "/fred/series/observations";
 
     private final WebClient webClient;
     private final FredClientProperties properties;
@@ -29,7 +25,7 @@ class FredClientServiceImpl implements FredClientService {
         // Adds required series ID and API key parameters
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(OBSERVATIONS_URL)
+                        .path(FredClientPaths.OBSERVATIONS_URL)
                         .queryParam("series_id", request.seriesId())
                         .queryParam("api_key", properties.getApiKey())
                         .queryParam("file_type", FileType.JSON.getValue())
