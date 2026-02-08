@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: unit-test
-          path: build/reports/tests/unit-test/aggregated-results
+          path: build/reports/tests/test/aggregated-results
         if: always()
 
       - name: Upload test coverage report
