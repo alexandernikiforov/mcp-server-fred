@@ -7,8 +7,8 @@ on:
       - 'master'
       - 'hotfix/**'
 
-    paths-ignore:
-      - '.github/workflows/**'
+#    paths-ignore:
+#      - '.github/workflows/**'
 
 jobs:
   build:
@@ -30,14 +30,14 @@ jobs:
         run: ./gradlew build --continue --no-daemon
 
       - name: Upload unit-test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: unit-test
           path: build/reports/tests/unit-test/aggregated-results
         if: always()
 
       - name: Upload test coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: test-coverage
           path: build/reports/jacoco/testCodeCoverageReport
