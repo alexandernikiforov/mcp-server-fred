@@ -1,5 +1,7 @@
 # FRED MCP Server
 
+![CI Build](https://github.com/alexandernikiforov/mcp-server-fred/actions/workflows/push-workflow.yml/badge.svg)
+
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that provides access to economic data from the [Federal Reserve Economic Data (FRED)](https://fred.stlouisfed.org/) website.
 
 ## Overview

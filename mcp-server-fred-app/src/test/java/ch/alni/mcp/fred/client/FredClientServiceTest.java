@@ -21,8 +21,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 class FredClientServiceTest extends FredClientServiceTestSupport {
 
     private static final Logger LOG = getLogger(FredClientServiceTest.class);
-
     private static final String SERIES_ID = "BAMLC0A0CM";
+
     private final MockWebServer server = MockWebServerProvider.WEB_SERVER;
 
     @Autowired
