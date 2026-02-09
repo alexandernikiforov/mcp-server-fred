@@ -1,6 +1,7 @@
 package ch.alni.mcp.fred.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
  * @param date
  * @param value
  */
+@Builder(toBuilder = true)
 public record Observation(
         @JsonProperty("realtime_start")
         LocalDate realtimeStart,

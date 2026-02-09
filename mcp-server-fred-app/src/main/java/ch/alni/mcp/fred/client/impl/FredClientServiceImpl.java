@@ -2,14 +2,20 @@ package ch.alni.mcp.fred.client.impl;
 
 import ch.alni.mcp.fred.client.*;
 import ch.alni.mcp.fred.client.config.FredClientProperties;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import java.util.Optional;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 class FredClientServiceImpl implements FredClientService {
+    private static final Logger LOG = getLogger(FredClientServiceImpl.class);
 
     private final WebClient webClient;
     private final FredClientProperties properties;
@@ -43,6 +49,10 @@ class FredClientServiceImpl implements FredClientService {
                         .queryParamIfPresent("vintage_dates", Optional.ofNullable(request.vintageDates()))
                         .build())
                 .retrieve()
-                .bodyToMono(ObservationsResponse.class);
+                .bodyToMono(ObservationsResponse.class)
+                .doOnError(throwable -> LOG.error("Cannot retrieve observations from server: {}", throwable.getMessage()))
+                .retryWhen(Retry.backoff(properties.getRetries(), properties.getBackoff())
+                        .filter(throwable -> throwable instanceof WebClientResponseException.TooManyRequests)
+                );
     }
 }

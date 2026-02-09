@@ -2,12 +2,13 @@ package ch.alni.mcp.fred.client;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
-@SpringJUnitConfig(classes = FredClientServiceTestConfiguration.class)
+@SpringJUnitConfig(classes = {FredClientServiceTestConfiguration.class, WebClientAutoConfiguration.class})
 @TestPropertySource("classpath:/fred-client-test.properties")
 class FredClientServiceTestSupport {
 

@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +36,12 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
     @Value("classpath:/responses/observations-response.json")
     private Resource observationsResponseResource;
 
+    @Value("classpath:/responses/observations-response-400.json")
+    private Resource observationsResponseBadRequestResource;
+
+    @Value("classpath:/responses/observations-response-429.json")
+    private Resource observationsResponseTooManyRequestsResource;
+
     @Test
     void getObservations() throws Exception {
         LOG.info("getObservations");
@@ -50,7 +58,16 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
 
         // check response
         StepVerifier.create(responseMono)
-                .expectNextMatches(response -> !response.observations().isEmpty())
+                .expectNextMatches(response -> {
+                    assertThat(response.observations()).isNotEmpty();
+                    assertThat(response.observations().get(0)).isEqualTo(Observation.builder()
+                            .realtimeStart(LocalDate.of(2013, Month.AUGUST, 14))
+                            .realtimeEnd(LocalDate.of(2013, Month.AUGUST, 14))
+                            .date(LocalDate.of(1929, Month.JANUARY, 1))
+                            .value(1065.9)
+                            .build());
+                    return true;
+                })
                 .verifyComplete();
 
         // check request
@@ -64,4 +81,53 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
                 .contains("series_id=" + SERIES_ID)
                 .contains("api_key=" + properties.getApiKey());
     }
+
+    @Test
+    void getObservationsBadRequest() throws Exception {
+        LOG.info("getObservationsBadRequest");
+
+        server.enqueue(new MockResponse.Builder()
+                .code(400)
+                .body(observationsResponseBadRequestResource.getContentAsString(StandardCharsets.UTF_8))
+                .addHeader("Content-Type", "application/json")
+                .build()
+        );
+
+        final Mono<ObservationsResponse> responseMono = service.getObservations(ObservationsRequest.builder()
+                .seriesId(SERIES_ID)
+                .build());
+
+        // check response
+        StepVerifier.create(responseMono)
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void getObservationsTooManyRequests() throws Exception {
+        LOG.info("getObservationsTooManyRequests");
+
+        server.enqueue(new MockResponse.Builder()
+                .code(429)
+                .body(observationsResponseTooManyRequestsResource.getContentAsString(StandardCharsets.UTF_8))
+                .addHeader("Content-Type", "application/json")
+                .build()
+        );
+
+        server.enqueue(new MockResponse.Builder()
+                .body(observationsResponseResource.getContentAsString(StandardCharsets.UTF_8))
+                .addHeader("Content-Type", "application/json")
+                .build()
+        );
+
+        final Mono<ObservationsResponse> responseMono = service.getObservations(ObservationsRequest.builder()
+                .seriesId(SERIES_ID)
+                .build());
+
+        // check response
+        StepVerifier.create(responseMono)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
 }
