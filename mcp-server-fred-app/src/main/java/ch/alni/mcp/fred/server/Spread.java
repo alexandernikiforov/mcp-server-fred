@@ -1,9 +1,9 @@
-package ch.alni.mcp.fred.core;
+package ch.alni.mcp.fred.server;
 
 /**
- * TODO: javadoc
+ * ICE BofA US Option-Adjusted Spreads.
  */
-public enum Spreads {
+public enum Spread {
     /**
      * ICE BofA US Corporate Index Option-Adjusted Spread.
      * <p>

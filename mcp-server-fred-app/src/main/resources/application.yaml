@@ -4,6 +4,7 @@ spring:
       server:
         # building the server addressed over Streamable HTTP
         protocol: streamable
+        type: async
 
 fred:
   client:

@@ -20,6 +20,6 @@ public record Observation(
         @JsonProperty("realtime_end")
         LocalDate realtimeEnd,
         LocalDate date,
-        double value
+        String value
 ) {
 }

@@ -1,5 +1,6 @@
 package ch.alni.mcp.fred.client.config;
 
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.boot.convert.DurationUnit;
@@ -7,6 +8,7 @@ import org.springframework.boot.convert.DurationUnit;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+@Getter
 @ConfigurationProperties(prefix = "fred.client")
 public class FredClientProperties {
 
@@ -43,19 +45,4 @@ public class FredClientProperties {
         this.backoff = backoff;
     }
 
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public int getRetries() {
-        return retries;
-    }
-
-    public Duration getBackoff() {
-        return backoff;
-    }
 }

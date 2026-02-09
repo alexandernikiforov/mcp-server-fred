@@ -62,10 +62,10 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
                 .expectNextMatches(response -> {
                     assertThat(response.observations()).isNotEmpty();
                     assertThat(response.observations().get(0)).isEqualTo(Observation.builder()
-                            .realtimeStart(LocalDate.of(2013, Month.AUGUST, 14))
-                            .realtimeEnd(LocalDate.of(2013, Month.AUGUST, 14))
-                            .date(LocalDate.of(1929, Month.JANUARY, 1))
-                            .value(1065.9)
+                            .realtimeStart(LocalDate.of(2026, Month.FEBRUARY, 9))
+                            .realtimeEnd(LocalDate.of(2026, Month.FEBRUARY, 9))
+                            .date(LocalDate.of(2025, Month.NOVEMBER, 10))
+                            .value("0.82")
                             .build());
                     return true;
                 })
