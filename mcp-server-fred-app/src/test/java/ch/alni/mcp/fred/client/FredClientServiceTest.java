@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -99,7 +100,7 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
 
         // check response
         StepVerifier.create(responseMono)
-                .expectError()
+                .expectError(WebClientResponseException.BadRequest.class)
                 .verify();
     }
 
@@ -128,6 +129,58 @@ class FredClientServiceTest extends FredClientServiceTestSupport {
         StepVerifier.create(responseMono)
                 .expectNextCount(1)
                 .verifyComplete();
+    }
+
+    @Test
+    void getObservationsTooManyRequestsFollowedByInternalServerError() throws Exception {
+        LOG.info("getObservationsTooManyRequestsFollowedByInternalServerError");
+
+        server.enqueue(new MockResponse.Builder()
+                .code(429)
+                .body(observationsResponseTooManyRequestsResource.getContentAsString(StandardCharsets.UTF_8))
+                .addHeader("Content-Type", "application/json")
+                .build()
+        );
+
+        server.enqueue(new MockResponse.Builder()
+                .code(500)
+                .build()
+        );
+
+        final Mono<ObservationsResponse> responseMono = service.getObservations(ObservationsRequest.builder()
+                .seriesId(SERIES_ID)
+                .build());
+
+        // check response
+        StepVerifier.create(responseMono)
+                .expectError(WebClientResponseException.InternalServerError.class)
+                .verify();
+    }
+
+    @Test
+    void getObservationsTooManyRequestsRetriesExhausted() throws Exception {
+        LOG.info("getObservationsTooManyRequestsRetriesExhausted");
+
+        final int totalAttempts = 1 + properties.getRetries();
+
+        for (int i = 0; i < totalAttempts; i++) {
+            server.enqueue(new MockResponse.Builder()
+                    .code(429)
+                    .body(observationsResponseTooManyRequestsResource.getContentAsString(StandardCharsets.UTF_8))
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+            );
+        }
+
+        final Mono<ObservationsResponse> responseMono = service.getObservations(ObservationsRequest.builder()
+                .seriesId(SERIES_ID)
+                .build());
+
+        // check response
+        StepVerifier.create(responseMono)
+                // when retries are exhausted, an IllegalStateException is thrown
+                .expectError(IllegalStateException.class)
+                .verify();
     }
 
 }
