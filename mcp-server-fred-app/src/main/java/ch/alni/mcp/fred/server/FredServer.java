@@ -9,10 +9,13 @@ import reactor.core.publisher.Mono;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Objects;
 
+@SuppressWarnings("unused")
 @Service
 public class FredServer {
 
+    public static final String MISSING_OBSERVATION_VALUE = ".";
     private final FredClientService clientService;
     private final Clock clock;
 
@@ -38,9 +41,10 @@ public class FredServer {
                         .build())
                 .map(response -> SpreadResponse.builder()
                         .spread(spread)
-                        .startDate(response.realtimeStart())
+                        .startDate(response.observationStart())
                         .endDate(response.observationEnd())
                         .points(response.observations().stream()
+                                .filter(observation -> !Objects.equals(observation.value(), MISSING_OBSERVATION_VALUE))
                                 .map(observation -> DataPoint.builder()
                                         .date(observation.date())
                                         .value(observation.value())

@@ -17,6 +17,7 @@ class FredClientConfiguration {
 
     @Bean
     WebClient webClient(WebClient.Builder webClientBuilder) {
-        return webClientBuilder.baseUrl(properties.getBaseUrl()).build();
+        return webClientBuilder.baseUrl(properties.getBaseUrl())
+                .build();
     }
 }

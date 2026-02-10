@@ -6,6 +6,10 @@ spring:
         protocol: streamable
         type: async
 
+  # disconnect after 10 seconds to play nicely with Kubernetes
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+
 fred:
   client:
     base-url: https://api.stlouisfed.org/
