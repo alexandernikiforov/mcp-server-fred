@@ -2,6 +2,7 @@ spring:
   ai:
     mcp:
       server:
+        name: mcp-server-fred
         # building the server addressed over Streamable HTTP
         protocol: streamable
         type: async

@@ -26,12 +26,15 @@ public class FredServer {
 
     @McpTool(description = "Returns 'ok'")
     public Mono<String> ping() {
-        return Mono.just("ok");
+        // test how it works with exceptions
+        return Mono.error(new RuntimeException("nok"));
     }
 
-    @McpTool(name = "fred_spread_window", description = "Returns the observation for the given spread over the provided window")
-    public Mono<SpreadResponse> getSpread(@McpToolParam Spread spread,
-                                          @McpToolParam Window window) {
+    @McpTool(name = "fred_spread_window",
+            description = "Returns the observation for the given spread over the provided window",
+            generateOutputSchema = true)
+    public Mono<SpreadResponse> getSpread(@McpToolParam(description = "The desired option spread to retrieve") Spread spread,
+                                          @McpToolParam(description = "The window over which to retrieve the spread") Window window) {
         final LocalDate endDate = LocalDate.now(clock);
         final LocalDate startDate = endDate.minus(window.getDuration());
         return clientService.getObservations(ObservationsRequest.builder()
@@ -44,6 +47,7 @@ public class FredServer {
                         .startDate(response.observationStart())
                         .endDate(response.observationEnd())
                         .points(response.observations().stream()
+                                // FRED sends "." for missing observations
                                 .filter(observation -> !Objects.equals(observation.value(), MISSING_OBSERVATION_VALUE))
                                 .map(observation -> DataPoint.builder()
                                         .date(observation.date())
