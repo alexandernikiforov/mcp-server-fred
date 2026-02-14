@@ -1,7 +1,7 @@
 package ch.alni.mcp.fred.server;
 
-import ch.alni.mcp.fred.client.FredClientService;
-import ch.alni.mcp.fred.client.ObservationsRequest;
+import ch.alni.mcp.fred.api.service.FredService;
+import ch.alni.mcp.fred.api.service.ObservationsRequest;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,13 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 @Service
-public class FredServer {
+public class FredMcpServer {
 
     public static final String MISSING_OBSERVATION_VALUE = ".";
-    private final FredClientService clientService;
+    private final FredService clientService;
     private final Clock clock;
 
-    public FredServer(FredClientService clientService, Clock clock) {
+    public FredMcpServer(FredService clientService, Clock clock) {
         this.clientService = clientService;
         this.clock = clock;
     }

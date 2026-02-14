@@ -1,7 +1,10 @@
-package ch.alni.mcp.fred.client.impl;
+package ch.alni.mcp.fred.api.service.impl;
 
-import ch.alni.mcp.fred.client.*;
-import ch.alni.mcp.fred.client.config.FredClientProperties;
+import ch.alni.mcp.fred.api.service.FileType;
+import ch.alni.mcp.fred.api.service.FredService;
+import ch.alni.mcp.fred.api.service.ObservationsRequest;
+import ch.alni.mcp.fred.api.service.ObservationsResponse;
+import ch.alni.mcp.fred.api.service.config.FredServiceProperties;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,15 +17,15 @@ import java.util.Optional;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-class FredClientServiceImpl implements FredClientService {
-    private static final Logger LOG = getLogger(FredClientServiceImpl.class);
+class FredServiceImpl implements FredService {
+    private static final Logger LOG = getLogger(FredServiceImpl.class);
 
     private final WebClient webClient;
-    private final FredClientProperties properties;
+    private final FredServiceProperties properties;
 
-    FredClientServiceImpl(FredClientProperties properties, WebClient webClient) {
+    FredServiceImpl(FredServiceProperties properties, WebClient fredWebClient) {
         this.properties = properties;
-        this.webClient = webClient;
+        this.webClient = fredWebClient;
     }
 
     @Override

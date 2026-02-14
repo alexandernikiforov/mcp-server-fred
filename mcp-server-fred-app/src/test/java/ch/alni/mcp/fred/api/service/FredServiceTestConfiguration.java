@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.client;
+package ch.alni.mcp.fred.api.service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -8,11 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @ComponentScan
 @Configuration
-class FredClientServiceTestConfiguration {
+class FredServiceTestConfiguration {
 
     @Bean
     @Primary
-    WebClient webClient(WebClient.Builder webClientBuilder) {
+    WebClient fredWebClient(WebClient.Builder webClientBuilder) {
         final int port = MockWebServerProvider.WEB_SERVER.getPort();
         final String baseUrl = String.format("http://localhost:%s", port);
         return webClientBuilder.baseUrl(baseUrl).build();

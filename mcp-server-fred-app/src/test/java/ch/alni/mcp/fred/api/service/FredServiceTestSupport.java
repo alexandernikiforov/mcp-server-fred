@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.client;
+package ch.alni.mcp.fred.api.service;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -8,9 +8,9 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
-@SpringJUnitConfig(classes = {FredClientServiceTestConfiguration.class, WebClientAutoConfiguration.class})
-@TestPropertySource("classpath:/fred-client-test.properties")
-class FredClientServiceTestSupport {
+@SpringJUnitConfig(classes = {FredServiceTestConfiguration.class, WebClientAutoConfiguration.class})
+@TestPropertySource("classpath:/fred-service-test.properties")
+class FredServiceTestSupport {
 
     @BeforeAll
     static void setUpMockServer() throws IOException {

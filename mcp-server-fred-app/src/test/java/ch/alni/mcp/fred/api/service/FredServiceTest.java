@@ -1,6 +1,7 @@
-package ch.alni.mcp.fred.client;
+package ch.alni.mcp.fred.api.service;
 
-import ch.alni.mcp.fred.client.config.FredClientProperties;
+import ch.alni.mcp.fred.api.service.config.FredServiceProperties;
+import ch.alni.mcp.fred.api.service.impl.FredClientPaths;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
@@ -21,18 +22,18 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
-class FredClientServiceTest extends FredClientServiceTestSupport {
+class FredServiceTest extends FredServiceTestSupport {
 
-    private static final Logger LOG = getLogger(FredClientServiceTest.class);
+    private static final Logger LOG = getLogger(FredServiceTest.class);
     private static final String SERIES_ID = "BAMLC0A0CM";
 
     private final MockWebServer server = MockWebServerProvider.WEB_SERVER;
 
     @Autowired
-    private FredClientService service;
+    private FredService service;
 
     @Autowired
-    private FredClientProperties properties;
+    private FredServiceProperties properties;
 
     @Value("classpath:/responses/observations-response.json")
     private Resource observationsResponseResource;

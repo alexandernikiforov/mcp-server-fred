@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.client.config;
+package ch.alni.mcp.fred.api.service.config;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,18 +9,13 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @Getter
-@ConfigurationProperties(prefix = "fred.client")
-public class FredClientProperties {
+@ConfigurationProperties(prefix = "fred.service")
+public class FredServiceProperties {
 
     /**
      * The API key to use for calls to Fred API.
      */
     private final String apiKey;
-
-    /**
-     * The URL of the Fred service.
-     */
-    private final String baseUrl;
 
     /**
      * How many times to retry in case of 429 status code (too many requests)
@@ -33,14 +28,12 @@ public class FredClientProperties {
     @DurationUnit(ChronoUnit.SECONDS)
     private final Duration backoff;
 
-    public FredClientProperties(String apiKey,
-                                String baseUrl,
-                                @DefaultValue("2")
-                                int retries,
-                                @DefaultValue("2s")
-                                Duration backoff) {
+    public FredServiceProperties(String apiKey,
+                                 @DefaultValue("2")
+                                 int retries,
+                                 @DefaultValue("2s")
+                                 Duration backoff) {
         this.apiKey = apiKey;
-        this.baseUrl = baseUrl;
         this.retries = retries;
         this.backoff = backoff;
     }

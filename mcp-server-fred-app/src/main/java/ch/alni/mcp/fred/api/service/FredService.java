@@ -1,11 +1,11 @@
-package ch.alni.mcp.fred.client;
+package ch.alni.mcp.fred.api.service;
 
 import reactor.core.publisher.Mono;
 
 /**
  * Connects to the FRED server.
  */
-public interface FredClientService {
+public interface FredService {
 
     /**
      * Retrieves time series observations for a specified FRED series based on the provided request parameters.
