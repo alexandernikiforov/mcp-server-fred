@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.api.service.config;
+package ch.alni.mcp.fred.service.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

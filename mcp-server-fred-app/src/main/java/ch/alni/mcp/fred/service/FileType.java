@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.api.service;
+package ch.alni.mcp.fred.service;
 
 /**
  * File types supported by the FRED server.

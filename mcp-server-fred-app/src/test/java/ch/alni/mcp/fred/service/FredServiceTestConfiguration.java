@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.api.service;
+package ch.alni.mcp.fred.service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

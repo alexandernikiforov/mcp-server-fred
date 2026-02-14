@@ -1,7 +1,7 @@
 package ch.alni.mcp.fred.server;
 
-import ch.alni.mcp.fred.api.service.FredService;
-import ch.alni.mcp.fred.api.service.ObservationsRequest;
+import ch.alni.mcp.fred.service.FredService;
+import ch.alni.mcp.fred.service.ObservationsRequest;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
-package ch.alni.mcp.fred.api.service;
+package ch.alni.mcp.fred.service;
 
-import ch.alni.mcp.fred.api.service.config.FredServiceProperties;
-import ch.alni.mcp.fred.api.service.impl.FredClientPaths;
+import ch.alni.mcp.fred.service.config.FredServiceProperties;
+import ch.alni.mcp.fred.service.impl.FredApiPaths;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
@@ -77,7 +77,7 @@ class FredServiceTest extends FredServiceTestSupport {
         assertThat(recordedRequest).isNotNull();
 
         assertThat(recordedRequest.getUrl().host()).isEqualTo("localhost");
-        assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(FredClientPaths.OBSERVATIONS_URL);
+        assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(FredApiPaths.OBSERVATIONS_URL);
         assertThat(recordedRequest.getMethod()).isEqualTo("GET");
         assertThat(recordedRequest.getRequestLine())
                 .contains("series_id=" + SERIES_ID)

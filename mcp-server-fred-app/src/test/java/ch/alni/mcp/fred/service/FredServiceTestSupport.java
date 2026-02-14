@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.api.service;
+package ch.alni.mcp.fred.service;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.api.client.config;
+package ch.alni.mcp.fred.client.config;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

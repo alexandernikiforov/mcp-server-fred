@@ -1,10 +1,10 @@
-package ch.alni.mcp.fred.api.service.impl;
+package ch.alni.mcp.fred.service.impl;
 
-import ch.alni.mcp.fred.api.service.FileType;
-import ch.alni.mcp.fred.api.service.FredService;
-import ch.alni.mcp.fred.api.service.ObservationsRequest;
-import ch.alni.mcp.fred.api.service.ObservationsResponse;
-import ch.alni.mcp.fred.api.service.config.FredServiceProperties;
+import ch.alni.mcp.fred.service.FileType;
+import ch.alni.mcp.fred.service.FredService;
+import ch.alni.mcp.fred.service.ObservationsRequest;
+import ch.alni.mcp.fred.service.ObservationsResponse;
+import ch.alni.mcp.fred.service.config.FredServiceProperties;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,7 +34,7 @@ class FredServiceImpl implements FredService {
         // Adds required series ID and API key parameters
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(FredClientPaths.OBSERVATIONS_URL)
+                        .path(FredApiPaths.OBSERVATIONS_URL)
                         .queryParam("series_id", request.seriesId())
                         .queryParam("api_key", properties.getApiKey())
                         .queryParam("file_type", FileType.JSON.getValue())
