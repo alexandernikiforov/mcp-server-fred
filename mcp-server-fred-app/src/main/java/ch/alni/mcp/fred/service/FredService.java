@@ -3,18 +3,16 @@ package ch.alni.mcp.fred.service;
 import reactor.core.publisher.Mono;
 
 /**
- * Connects to the FRED server.
+ * Service for interacting with the FRED API to retrieve economic data.
  */
 public interface FredService {
 
     /**
-     * Retrieves time series observations for a specified FRED series based on the provided request parameters.
+     * Retrieves economic data for the specified spread and window.
      *
-     * @param request The request object specifying query parameters such as series ID, date range, frequency,
-     *                transformation options, and other filter criteria for retrieving observations.
-     * @return A {@code Mono} emitting the {@code ObservationsResponse} containing the requested time series
-     * observations and related metadata.
+     * @param spread the economic spread to retrieve data for
+     * @param window the time window to retrieve data for
+     * @return a Mono that emits the SpreadResponse containing the retrieved data
      */
-    Mono<ObservationsResponse> getObservations(ObservationsRequest request);
-
+    Mono<SpreadResponse> getSpread(Spread spread, Window window);
 }

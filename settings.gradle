@@ -6,9 +6,9 @@ pluginManagement {
 
 rootProject.name = 'mcp-server-fred'
 
-includeBuild('mcp-server-fred-conventions') {
-    name = 'mcp-server-fred-conventions'
+includeBuild('mcp-server-conventions') {
+    name = 'mcp-server-conventions'
 }
 
-include 'mcp-server-fred-platform',
+include 'mcp-server-platform',
         'mcp-server-fred-app'

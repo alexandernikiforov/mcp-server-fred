@@ -12,7 +12,7 @@ spring:
     timeout-per-shutdown-phase: 10s
 
 fred:
-  client:
+  http:
     base-url: https://api.stlouisfed.org/
     read-timeout: 30s
     connect-timeout: 30s
