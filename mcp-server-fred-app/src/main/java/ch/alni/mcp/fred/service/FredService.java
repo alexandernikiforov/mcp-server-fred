@@ -1,5 +1,7 @@
 package ch.alni.mcp.fred.service;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 /**
@@ -8,11 +10,11 @@ import reactor.core.publisher.Mono;
 public interface FredService {
 
     /**
-     * Retrieves economic data for the specified spread and window.
+     * Retrieves time series data for a specified economic data series within a given date range.
      *
-     * @param spread the economic spread to retrieve data for
-     * @param window the time window to retrieve data for
-     * @return a Mono that emits the SpreadResponse containing the retrieved data
+     * @param series the economic data series to retrieve; must not be null
+     * @param range the date range for which the data is requested; must be valid and not null
+     * @return a Mono emitting the SeriesResponse containing the series data and associated metadata
      */
-    Mono<SpreadResponse> getSpread(Spread spread, Window window);
+    Mono<SeriesResponse> getSeries(@NotNull Series series, @Valid @NotNull DateRange range);
 }

@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Builder(toBuilder = true)
-public record SpreadResponse(
-        Spread spread,
+public record SeriesResponse(
+        Series series,
         @JsonProperty("start_date")
         LocalDate startDate,
         @JsonProperty("end_date")

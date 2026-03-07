@@ -3,41 +3,37 @@ package ch.alni.mcp.fred.service.impl;
 import ch.alni.mcp.fred.port.FredApiClient;
 import ch.alni.mcp.fred.port.ObservationsRequest;
 import ch.alni.mcp.fred.service.DataPoint;
+import ch.alni.mcp.fred.service.DateRange;
 import ch.alni.mcp.fred.service.FredService;
-import ch.alni.mcp.fred.service.Spread;
-import ch.alni.mcp.fred.service.SpreadResponse;
-import ch.alni.mcp.fred.service.Window;
+import ch.alni.mcp.fred.service.Series;
+import ch.alni.mcp.fred.service.SeriesResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Mono;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Service
+@Validated
 class FredServiceImpl implements FredService {
 
     public static final String MISSING_OBSERVATION_VALUE = ".";
 
     private final FredApiClient apiClient;
-    private final Clock clock;
 
-    FredServiceImpl(FredApiClient apiClient, Clock clock) {
+    FredServiceImpl(FredApiClient apiClient) {
         this.apiClient = apiClient;
-        this.clock = clock;
     }
 
     @Override
-    public Mono<SpreadResponse> getSpread(Spread spread, Window window) {
-        final LocalDate endDate = LocalDate.now(clock);
-        final LocalDate startDate = endDate.minus(window.getDuration());
+    public Mono<SeriesResponse> getSeries(Series series, DateRange range) {
         return apiClient.getObservations(ObservationsRequest.builder()
-                        .seriesId(spread.name())
-                        .observationEnd(endDate)
-                        .observationStart(startDate)
+                        .seriesId(series.name())
+                        .observationEnd(range.end())
+                        .observationStart(range.start())
                         .build())
-                .map(response -> SpreadResponse.builder()
-                        .spread(spread)
+                .map(response -> SeriesResponse.builder()
+                        .series(series)
                         .startDate(response.observationStart())
                         .endDate(response.observationEnd())
                         .points(response.observations().stream()
