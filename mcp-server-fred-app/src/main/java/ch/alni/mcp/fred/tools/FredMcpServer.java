@@ -33,8 +33,12 @@ public class FredMcpServer {
     }
 
     @McpTool(name = "fred_economic_series_lookback",
-            description = "Returns the observation for the given spread over the provided lookback interval",
-            generateOutputSchema = true)
+            description = "Returns the observation for the given economic series over the provided lookback interval",
+            generateOutputSchema = true,
+            annotations = @McpTool.McpAnnotations(
+                    title = "Fred Economic Series Lookback",
+                    readOnlyHint = true
+            ))
     public Mono<SeriesResponse> getSeries(@McpToolParam(description = "The desired economic series to retrieve") Series series,
                                           @McpToolParam(description = "The lookback interval over which to retrieve the series") LookbackPeriod lookbackPeriod) {
         return fredService.getSeries(series, DateRange.of(lookbackPeriod, clock));
@@ -42,7 +46,11 @@ public class FredMcpServer {
 
     @McpTool(name = "fred_economic_series_date_range",
             description = "Returns observations for the given economic series over the date range",
-            generateOutputSchema = true)
+            generateOutputSchema = true,
+            annotations = @McpTool.McpAnnotations(
+                    title = "Fred Economic Series Date Range",
+                    readOnlyHint = true
+            ))
     public Mono<SeriesResponse> getSeries(@McpToolParam(description = "The desired economic series to retrieve") Series series,
                                           @McpToolParam(description = "The start date of the time window, in ISO date format yyyy-MM-dd")
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
