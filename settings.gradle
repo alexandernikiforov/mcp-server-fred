@@ -11,4 +11,5 @@ includeBuild('mcp-server-conventions') {
 }
 
 include 'mcp-server-platform',
-        'mcp-server-fred-app'
+        'mcp-server-fred-app',
+        'mcp-server-edgar'
