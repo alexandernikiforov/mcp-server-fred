@@ -12,21 +12,15 @@ import reactor.core.publisher.Mono;
 class EdgarApiWebClient implements EdgarApiClient {
 
     private final WebClient dataWebClient;
-    private final WebClient archiveWebClient;
 
-    EdgarApiWebClient(WebClient edgarDataWebClient, WebClient edgarArchiveWebClient) {
+    EdgarApiWebClient(WebClient edgarDataWebClient) {
         this.dataWebClient = edgarDataWebClient;
-        this.archiveWebClient = edgarArchiveWebClient;
-    }
-
-    private static String formatCik(long cik) {
-        return String.format("%010d", cik);
     }
 
     @Override
     public Mono<CompanySubmissionsResponse> getCompanySubmissions(long cik) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.SUBMISSIONS_PATH, formatCik(cik))
+                .uri(EdgarApiPaths.SUBMISSIONS_PATH, CikFormatter.formatCik(cik))
                 .retrieve()
                 .bodyToMono(CompanySubmissionsResponse.class);
     }
@@ -34,7 +28,7 @@ class EdgarApiWebClient implements EdgarApiClient {
     @Override
     public Mono<CompanyFactsResponse> getCompanyFacts(long cik) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.COMPANY_FACTS_PATH, formatCik(cik))
+                .uri(EdgarApiPaths.COMPANY_FACTS_PATH, CikFormatter.formatCik(cik))
                 .retrieve()
                 .bodyToMono(CompanyFactsResponse.class);
     }
@@ -42,16 +36,8 @@ class EdgarApiWebClient implements EdgarApiClient {
     @Override
     public Mono<CompanyConceptResponse> getCompanyConcept(long cik, String taxonomy, String concept) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.COMPANY_CONCEPT_PATH, formatCik(cik), taxonomy, concept)
+                .uri(EdgarApiPaths.COMPANY_CONCEPT_PATH, CikFormatter.formatCik(cik), taxonomy, concept)
                 .retrieve()
                 .bodyToMono(CompanyConceptResponse.class);
-    }
-
-    @Override
-    public Mono<String> getAccession(long cik, String accession, String primaryDocument) {
-        return archiveWebClient.get()
-                .uri(EdgarApiPaths.ACCESSION_PATH, formatCik(cik), accession, primaryDocument)
-                .retrieve()
-                .bodyToMono(String.class);
     }
 }

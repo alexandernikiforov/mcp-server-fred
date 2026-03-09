@@ -7,18 +7,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.time.Duration;
 
 @Getter
-@ConfigurationProperties(prefix = "edgar.http")
-public class EdgarHttpClientProperties {
+@ConfigurationProperties(prefix = "edgar.http.archive")
+public class EdgarHttpArchiveClientProperties {
 
     /**
      * The URL of the Edgar service.
      */
-    private final String dataBaseUrl;
-
-    /**
-     * The URL of the Edgar service.
-     */
-    private final String archiveBaseUrl;
+    private final String baseUrl;
 
     /**
      * The maximum time to wait when attempting to establish a connection to the Edgar service.
@@ -35,13 +30,11 @@ public class EdgarHttpClientProperties {
      */
     private final String userAgent;
 
-    public EdgarHttpClientProperties(@DefaultValue("https://data.sec.gov") String dataBaseUrl,
-                                     @DefaultValue("https://www.sec.gov/") String archiveBaseUrl,
-                                     @DefaultValue("30s") Duration connectTimeout,
-                                     @DefaultValue("30s") Duration readTimeout,
-                                     @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent) {
-        this.dataBaseUrl = dataBaseUrl;
-        this.archiveBaseUrl = archiveBaseUrl;
+    public EdgarHttpArchiveClientProperties(@DefaultValue("https://www.sec.gov/") String baseUrl,
+                                            @DefaultValue("30s") Duration connectTimeout,
+                                            @DefaultValue("30s") Duration readTimeout,
+                                            @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent) {
+        this.baseUrl = baseUrl;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.userAgent = userAgent;

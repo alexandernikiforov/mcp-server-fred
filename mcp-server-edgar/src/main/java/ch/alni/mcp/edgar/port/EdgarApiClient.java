@@ -36,6 +36,4 @@ public interface EdgarApiClient {
      * if the request fails
      */
     Mono<CompanyConceptResponse> getCompanyConcept(long cik, String taxonomy, String concept);
-
-    Mono<String> getAccession(long cik, String accession, String primaryDocument);
 }

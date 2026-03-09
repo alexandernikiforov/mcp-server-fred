@@ -11,23 +11,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties({EdgarHttpClientProperties.class})
+@EnableConfigurationProperties({EdgarHttpDataClientProperties.class, EdgarHttpArchiveClientProperties.class})
 class EdgarHttpClientConfiguration {
 
-    private final EdgarHttpClientProperties properties;
+    private final EdgarHttpDataClientProperties dataClientProperties;
+    private final EdgarHttpArchiveClientProperties archiveClientProperties;
 
-    EdgarHttpClientConfiguration(EdgarHttpClientProperties properties) {
-        this.properties = properties;
+    EdgarHttpClientConfiguration(EdgarHttpDataClientProperties dataClientProperties,
+                                 EdgarHttpArchiveClientProperties archiveClientProperties) {
+        this.dataClientProperties = dataClientProperties;
+        this.archiveClientProperties = archiveClientProperties;
     }
 
     @Bean
     WebClient edgarDataWebClient(WebClient.Builder webClientBuilder) {
         final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(properties.getReadTimeout())
-                .withConnectTimeout(properties.getConnectTimeout()));
+                .withReadTimeout(dataClientProperties.getReadTimeout())
+                .withConnectTimeout(dataClientProperties.getConnectTimeout()));
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-        return webClientBuilder.baseUrl(properties.getDataBaseUrl())
-                .defaultHeader("User-Agent", properties.getUserAgent())
+        return webClientBuilder.baseUrl(dataClientProperties.getBaseUrl())
+                .defaultHeader("User-Agent", dataClientProperties.getUserAgent())
                 .clientConnector(connector)
                 .build();
     }
@@ -35,11 +38,11 @@ class EdgarHttpClientConfiguration {
     @Bean
     WebClient edgarArchiveWebClient(WebClient.Builder webClientBuilder) {
         final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(properties.getReadTimeout())
-                .withConnectTimeout(properties.getConnectTimeout()));
+                .withReadTimeout(archiveClientProperties.getReadTimeout())
+                .withConnectTimeout(archiveClientProperties.getConnectTimeout()));
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-        return webClientBuilder.baseUrl(properties.getArchiveBaseUrl())
-                .defaultHeader("User-Agent", properties.getUserAgent())
+        return webClientBuilder.baseUrl(archiveClientProperties.getBaseUrl())
+                .defaultHeader("User-Agent", archiveClientProperties.getUserAgent())
                 .clientConnector(connector)
                 .build();
     }
