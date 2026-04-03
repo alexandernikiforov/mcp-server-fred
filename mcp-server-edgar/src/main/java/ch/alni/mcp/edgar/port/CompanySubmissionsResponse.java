@@ -3,6 +3,8 @@ package ch.alni.mcp.edgar.port;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -66,9 +68,9 @@ public record CompanySubmissionsResponse(
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record RecentFilings(
             List<String> accessionNumber,
-            List<String> filingDate,
+            List<LocalDate> filingDate,
             List<String> reportDate,
-            List<String> acceptanceDateTime,
+            List<Instant> acceptanceDateTime,
             List<String> form,
             List<String> primaryDocument,
             List<String> primaryDocDescription

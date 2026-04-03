@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -11,11 +11,11 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
-@SpringJUnitConfig(classes = {FredApiClientTestConfiguration.class, WebClientAutoConfiguration.class})
-@TestPropertySource("classpath:/fred-api-client-test.properties")
-class FredApiClientTestSupport {
+@SpringJUnitConfig(classes = {EdgarClientTestConfiguration.class, WebClientAutoConfiguration.class})
+@TestPropertySource("classpath:/edgar-client-test.properties")
+class EdgarClientTestSupport {
 
-    protected static final MockWebServer server = new MockWebServer();
+    static final MockWebServer server = new MockWebServer();
 
     @BeforeAll
     static void setUpMockServer() throws IOException {
@@ -29,7 +29,6 @@ class FredApiClientTestSupport {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("fred.mock.port", server::getPort);
+        registry.add("edgar.mock.port", server::getPort);
     }
-
 }

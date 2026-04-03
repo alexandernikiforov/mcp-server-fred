@@ -31,6 +31,8 @@ class EdgarHttpClientConfiguration {
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
         return webClientBuilder.baseUrl(dataClientProperties.getBaseUrl())
                 .defaultHeader("User-Agent", dataClientProperties.getUserAgent())
+                .codecs(configurer -> configurer.defaultCodecs()
+                        .maxInMemorySize(dataClientProperties.getMaxHttpResponseMemorySizeInKib() * 1024))
                 .clientConnector(connector)
                 .build();
     }

@@ -23,7 +23,7 @@ import java.util.Map;
 @Builder(toBuilder = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CompanyConceptResponse(
-        String cik,
+        long cik,
         String taxonomy,
         String tag,
         String label,

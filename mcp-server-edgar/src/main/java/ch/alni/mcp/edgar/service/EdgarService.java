@@ -2,7 +2,6 @@ package ch.alni.mcp.edgar.service;
 
 public interface EdgarService {
 
-
     /**
      * Resolves the CIK (Central Index Key) for a given ticker symbol.
      *

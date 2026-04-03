@@ -5,7 +5,6 @@ import ch.alni.mcp.fred.port.Observation;
 import ch.alni.mcp.fred.port.ObservationsRequest;
 import ch.alni.mcp.fred.port.ObservationsResponse;
 import mockwebserver3.MockResponse;
-import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,8 +27,6 @@ class FredApiClientTest extends FredApiClientTestSupport {
 
     private static final Logger LOG = getLogger(FredApiClientTest.class);
     private static final String SERIES_ID = "BAMLC0A0CM";
-
-    private final MockWebServer server = MockWebServerProvider.WEB_SERVER;
 
     @Autowired
     private FredApiClient client;

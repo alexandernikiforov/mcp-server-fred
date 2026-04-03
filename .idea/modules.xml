@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mcp-server-edgar/mcp-server-fred.mcp-server-edgar.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mcp-server-edgar/mcp-server-fred.mcp-server-edgar.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mcp-server-edgar/mcp-server-fred.mcp-server-edgar.test.iml" filepath="$PROJECT_DIR$/.idea/modules/mcp-server-edgar/mcp-server-fred.mcp-server-edgar.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mcp-server-fred-app/mcp-server-fred.mcp-server-fred-app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mcp-server-fred-app/mcp-server-fred.mcp-server-fred-app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mcp-server-fred-app/mcp-server-fred.mcp-server-fred-app.test.iml" filepath="$PROJECT_DIR$/.idea/modules/mcp-server-fred-app/mcp-server-fred.mcp-server-fred-app.test.iml" />
     </modules>
   </component>
 </project>

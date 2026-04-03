@@ -30,13 +30,20 @@ public class EdgarHttpDataClientProperties {
      */
     private final String userAgent;
 
+    /**
+     * Maximum size, in KiB, of an HTTP response that may be buffered in memory. Defaults to 16 MiB.
+     */
+    private final int maxHttpResponseMemorySizeInKib;
+
     public EdgarHttpDataClientProperties(@DefaultValue("https://data.sec.gov/") String baseUrl,
                                          @DefaultValue("30s") Duration connectTimeout,
                                          @DefaultValue("30s") Duration readTimeout,
-                                         @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent) {
+                                         @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent,
+                                         @DefaultValue("16384") int maxHttpResponseMemorySizeInKib) {
         this.baseUrl = baseUrl;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.userAgent = userAgent;
+        this.maxHttpResponseMemorySizeInKib = maxHttpResponseMemorySizeInKib;
     }
 }

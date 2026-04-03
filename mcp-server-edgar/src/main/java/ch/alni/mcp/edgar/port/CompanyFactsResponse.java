@@ -20,7 +20,7 @@ import java.util.Map;
 @Builder(toBuilder = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CompanyFactsResponse(
-        String cik,
+        long cik,
         String entityName,
         Map<String, Map<String, FactDefinition>> facts
 ) {
