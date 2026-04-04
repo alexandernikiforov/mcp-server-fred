@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -141,6 +142,22 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
         assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(
                 EdgarApiPaths.SUBMISSIONS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
         assertThat(recordedRequest.getMethod()).isEqualTo("GET");
+    }
+
+    @Test
+    void getSubmissionsIfForbidden() {
+        server.enqueue(new MockResponse.Builder()
+                .code(403)
+                .body("<html><body>SEC.gov | Your Request Originates from an Undeclared Automated Tool</body></html>")
+                .addHeader("Content-Type", "text/html; charset=UTF-8")
+                .build()
+        );
+
+        final Mono<CompanySubmissionsResponse> responseMono = client.getCompanySubmissions(320193);
+
+        StepVerifier.create(responseMono)
+                .expectError(WebClientResponseException.Forbidden.class)
+                .verify();
     }
 
 }

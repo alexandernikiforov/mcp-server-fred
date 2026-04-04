@@ -1,6 +1,7 @@
 package ch.alni.mcp.edgar.adapter.http;
 
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,6 +16,7 @@ class EdgarArchiveHttpClient implements EdgarArchiveClient {
     }
 
     @Override
+    @RateLimiter(name = "edgar")
     public Mono<String> getAccession(long cik, String accession, String primaryDocument) {
         return archiveWebClient.get()
                 .uri(EdgarApiPaths.ACCESSION_PATH, CikFormatter.formatCik(cik), accession, primaryDocument)
