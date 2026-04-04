@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.AfterAll;

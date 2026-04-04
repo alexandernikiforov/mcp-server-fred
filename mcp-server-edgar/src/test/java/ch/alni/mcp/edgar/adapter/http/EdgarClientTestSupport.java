@@ -1,5 +1,6 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
+import io.github.resilience4j.springboot.ratelimiter.autoconfigure.RateLimiterAutoConfiguration;
 import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
-@SpringJUnitConfig(classes = {EdgarClientTestConfiguration.class, WebClientAutoConfiguration.class})
+@SpringJUnitConfig(classes = {EdgarClientTestConfiguration.class, WebClientAutoConfiguration.class, RateLimiterAutoConfiguration.class})
 @TestPropertySource("classpath:/edgar-client-test.properties")
 class EdgarClientTestSupport {
 

@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import ch.alni.mcp.fred.port.FredApiClient;
 import ch.alni.mcp.fred.port.Observation;

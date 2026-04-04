@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.http;
+package ch.alni.mcp.fred.adapter.webclient;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,8 +7,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.time.Duration;
 
 @Getter
-@ConfigurationProperties(prefix = "fred.http")
-public class FredHttpClientProperties {
+@ConfigurationProperties(prefix = "fred.webclient")
+public class FredWebClientProperties {
 
     /**
      * The URL of the Fred service.
@@ -27,10 +27,10 @@ public class FredHttpClientProperties {
      */
     private final Duration readTimeout;
 
-    public FredHttpClientProperties(String baseUrl,
-                                    @DefaultValue("30s")
+    public FredWebClientProperties(String baseUrl,
+                                   @DefaultValue("30s")
                                 Duration connectTimeout,
-                                    @DefaultValue("30s")
+                                   @DefaultValue("30s")
                                 Duration readTimeout) {
         this.baseUrl = baseUrl;
         this.connectTimeout = connectTimeout;

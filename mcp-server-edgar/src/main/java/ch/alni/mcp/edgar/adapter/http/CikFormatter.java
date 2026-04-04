@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 
 final class CikFormatter {

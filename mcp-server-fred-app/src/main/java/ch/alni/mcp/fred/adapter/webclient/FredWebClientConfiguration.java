@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.http;
+package ch.alni.mcp.fred.adapter.webclient;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.http.client.HttpClientSettings;
@@ -11,12 +11,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties({FredHttpClientProperties.class})
-class FredHttpClientConfiguration {
+@EnableConfigurationProperties({FredWebClientProperties.class})
+class FredWebClientConfiguration {
 
-    private final FredHttpClientProperties properties;
+    private final FredWebClientProperties properties;
 
-    FredHttpClientConfiguration(FredHttpClientProperties properties) {
+    FredWebClientConfiguration(FredWebClientProperties properties) {
         this.properties = properties;
     }
 

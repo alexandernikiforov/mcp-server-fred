@@ -15,7 +15,7 @@ class EdgarServiceImpl implements EdgarService {
     }
 
     @Override
-    public long resolveCik(String ticker) {
+    public Long resolveCik(String ticker) {
         return tickerResolver.resolve(ticker);
     }
 }

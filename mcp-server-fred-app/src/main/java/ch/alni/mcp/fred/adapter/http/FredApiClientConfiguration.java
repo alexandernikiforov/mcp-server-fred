@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

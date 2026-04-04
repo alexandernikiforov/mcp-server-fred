@@ -10,3 +10,18 @@ spring:
   # disconnect after 10 seconds to play nicely with Kubernetes
   lifecycle:
     timeout-per-shutdown-phase: 10s
+
+resilience4j:
+  ratelimiter:
+    instances:
+      edgar:
+        limitForPeriod: 2
+        limitRefreshPeriod: 1s
+        timeoutDuration: 5s
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+
+management:
+  health:
+    ratelimiters:
+      enabled: true

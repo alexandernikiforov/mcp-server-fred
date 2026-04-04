@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

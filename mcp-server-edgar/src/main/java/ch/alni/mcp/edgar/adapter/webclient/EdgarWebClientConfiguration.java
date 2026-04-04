@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.http.client.HttpClientSettings;
@@ -11,14 +11,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties({EdgarHttpDataClientProperties.class, EdgarHttpArchiveClientProperties.class})
-class EdgarHttpClientConfiguration {
+@EnableConfigurationProperties({
+        EdgarWebClientProperties.class,
+        EdgarDataWebClientProperties.class,
+        EdgarArchiveWebClientProperties.class
+})
+class EdgarWebClientConfiguration {
 
-    private final EdgarHttpDataClientProperties dataClientProperties;
-    private final EdgarHttpArchiveClientProperties archiveClientProperties;
+    private final EdgarWebClientProperties properties;
+    private final EdgarDataWebClientProperties dataClientProperties;
+    private final EdgarArchiveWebClientProperties archiveClientProperties;
 
-    EdgarHttpClientConfiguration(EdgarHttpDataClientProperties dataClientProperties,
-                                 EdgarHttpArchiveClientProperties archiveClientProperties) {
+    EdgarWebClientConfiguration(EdgarWebClientProperties properties,
+                                EdgarDataWebClientProperties dataClientProperties,
+                                EdgarArchiveWebClientProperties archiveClientProperties) {
+        this.properties = properties;
         this.dataClientProperties = dataClientProperties;
         this.archiveClientProperties = archiveClientProperties;
     }
@@ -26,11 +33,12 @@ class EdgarHttpClientConfiguration {
     @Bean
     WebClient edgarDataWebClient(WebClient.Builder webClientBuilder) {
         final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(dataClientProperties.getReadTimeout())
-                .withConnectTimeout(dataClientProperties.getConnectTimeout()));
+                .withReadTimeout(properties.getReadTimeout())
+                .withConnectTimeout(properties.getConnectTimeout()));
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
         return webClientBuilder.baseUrl(dataClientProperties.getBaseUrl())
-                .defaultHeader("User-Agent", dataClientProperties.getUserAgent())
+                .defaultHeader("User-Agent", properties.getUserAgent())
+                .defaultHeader("Accept-Encoding", "gzip", "deflate")
                 .codecs(configurer -> configurer.defaultCodecs()
                         .maxInMemorySize(dataClientProperties.getMaxHttpResponseMemorySizeInKib() * 1024))
                 .clientConnector(connector)
@@ -40,11 +48,12 @@ class EdgarHttpClientConfiguration {
     @Bean
     WebClient edgarArchiveWebClient(WebClient.Builder webClientBuilder) {
         final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(archiveClientProperties.getReadTimeout())
-                .withConnectTimeout(archiveClientProperties.getConnectTimeout()));
+                .withReadTimeout(properties.getReadTimeout())
+                .withConnectTimeout(properties.getConnectTimeout()));
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
         return webClientBuilder.baseUrl(archiveClientProperties.getBaseUrl())
-                .defaultHeader("User-Agent", archiveClientProperties.getUserAgent())
+                .defaultHeader("User-Agent", properties.getUserAgent())
+                .defaultHeader("Accept-Encoding", "gzip", "deflate")
                 .clientConnector(connector)
                 .build();
     }

@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import org.springframework.stereotype.Component;
@@ -6,11 +6,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-class EdgarArchiveWebClient implements EdgarArchiveClient {
+class EdgarArchiveHttpClient implements EdgarArchiveClient {
 
     private final WebClient archiveWebClient;
 
-    EdgarArchiveWebClient(WebClient edgarArchiveWebClient) {
+    EdgarArchiveHttpClient(WebClient edgarArchiveWebClient) {
         this.archiveWebClient = edgarArchiveWebClient;
     }
 

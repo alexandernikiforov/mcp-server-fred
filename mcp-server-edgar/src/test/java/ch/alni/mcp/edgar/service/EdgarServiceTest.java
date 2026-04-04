@@ -16,4 +16,9 @@ class EdgarServiceTest extends EdgarServiceTestSupport {
         assertThat(service.resolveCik("AAPL")).isEqualTo(320193L);
         assertThat(service.resolveCik("NVDA")).isEqualTo(1045810L);
     }
+
+    @Test
+    void resolveCikIfNotExists() {
+        assertThat(service.resolveCik("BLABLABLA")).isNull();
+    }
 }

@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 public final class EdgarApiPaths {
     public static final String ACCESSION_PATH = "/accession/{cik}/{accession}/{primaryDocument}";

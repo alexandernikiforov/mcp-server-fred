@@ -1,19 +1,19 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 import ch.alni.mcp.edgar.port.CompanyConceptResponse;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
-import ch.alni.mcp.edgar.port.EdgarApiClient;
+import ch.alni.mcp.edgar.port.EdgarDataClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-class EdgarApiWebClient implements EdgarApiClient {
+class EdgarDataHttpClient implements EdgarDataClient {
 
     private final WebClient dataWebClient;
 
-    EdgarApiWebClient(WebClient edgarDataWebClient) {
+    EdgarDataHttpClient(WebClient edgarDataWebClient) {
         this.dataWebClient = edgarDataWebClient;
     }
 

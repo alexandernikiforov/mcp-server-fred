@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,13 +7,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.time.Duration;
 
 @Getter
-@ConfigurationProperties(prefix = "edgar.http.archive")
-public class EdgarHttpArchiveClientProperties {
-
-    /**
-     * The URL of the Edgar service.
-     */
-    private final String baseUrl;
+@ConfigurationProperties(prefix = "edgar.webclient")
+public class EdgarWebClientProperties {
 
     /**
      * The maximum time to wait when attempting to establish a connection to the Edgar service.
@@ -30,11 +25,9 @@ public class EdgarHttpArchiveClientProperties {
      */
     private final String userAgent;
 
-    public EdgarHttpArchiveClientProperties(@DefaultValue("https://www.sec.gov/") String baseUrl,
-                                            @DefaultValue("30s") Duration connectTimeout,
-                                            @DefaultValue("30s") Duration readTimeout,
-                                            @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent) {
-        this.baseUrl = baseUrl;
+    public EdgarWebClientProperties(@DefaultValue("30s") Duration connectTimeout,
+                                    @DefaultValue("30s") Duration readTimeout,
+                                    @DefaultValue("mcp-server-edgar (your@email.com)") String userAgent) {
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.userAgent = userAgent;

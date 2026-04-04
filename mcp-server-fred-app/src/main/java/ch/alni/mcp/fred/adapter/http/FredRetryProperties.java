@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

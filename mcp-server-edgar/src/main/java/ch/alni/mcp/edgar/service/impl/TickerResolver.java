@@ -23,7 +23,14 @@ class TickerResolver implements InitializingBean {
         this.jsonMapper = jsonMapper;
     }
 
-    long resolve(String ticker) {
+    /**
+     * Resolves the Central Index Key (CIK) associated with the given ticker symbol.
+     *
+     * @param ticker The ticker symbol to be resolved. It is case-insensitive and will be converted to uppercase during
+     *               resolution.
+     * @return The CIK associated with the provided ticker symbol, or null if no CIK is found for the ticker.
+     */
+    Long resolve(String ticker) {
         return tickersMap.get(ticker.toUpperCase());
     }
 

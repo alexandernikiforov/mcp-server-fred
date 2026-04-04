@@ -1,10 +1,10 @@
-package ch.alni.mcp.edgar.adapter.webclient;
+package ch.alni.mcp.edgar.adapter.http;
 
 import ch.alni.mcp.edgar.port.CompanyConceptResponse;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
-import ch.alni.mcp.edgar.port.EdgarApiClient;
+import ch.alni.mcp.edgar.port.EdgarDataClient;
 import mockwebserver3.MockResponse;
 import mockwebserver3.RecordedRequest;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EdgarApiWebClientTest extends EdgarClientTestSupport {
+class EdgarDataClientTest extends EdgarClientTestSupport {
 
     @Value("classpath:/responses/CIK0000320193-facts.json")
     private Resource companyFactsResponseResource;
@@ -33,7 +33,7 @@ class EdgarApiWebClientTest extends EdgarClientTestSupport {
     private Resource submissionsResponseResource;
 
     @Autowired
-    private EdgarApiClient client;
+    private EdgarDataClient client;
 
     @Test
     void getCompanyFacts() throws Exception {

@@ -1,12 +1,13 @@
 package ch.alni.mcp.edgar.port;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import reactor.core.publisher.Mono;
 
 /**
  * Client interface for interacting with the SEC Edgar API. This interface provides methods to retrieve data related to
  * SEC submissions, company facts, and specific concepts for a registrant using its Central Index Key (CIK).
  */
-public interface EdgarApiClient {
+public interface EdgarDataClient {
 
     /**
      * Retrieves SEC submissions data for a given company using its Central Index Key (CIK).
@@ -15,6 +16,7 @@ public interface EdgarApiClient {
      * @return a {@link Mono} emitting the {@link CompanySubmissionsResponse} containing submission details, or an error
      * if the request fails
      */
+    @RateLimiter(name = "edgar")
     Mono<CompanySubmissionsResponse> getCompanySubmissions(long cik);
 
     /**
@@ -24,6 +26,7 @@ public interface EdgarApiClient {
      * @return a {@link Mono} emitting the {@link CompanyFactsResponse} containing company facts data, or an error if
      * the request fails
      */
+    @RateLimiter(name = "edgar")
     Mono<CompanyFactsResponse> getCompanyFacts(long cik);
 
     /**
@@ -35,5 +38,6 @@ public interface EdgarApiClient {
      * @return a {@link Mono} emitting the {@link CompanyConceptResponse} containing company concept data, or an error
      * if the request fails
      */
+    @RateLimiter(name = "edgar")
     Mono<CompanyConceptResponse> getCompanyConcept(long cik, String taxonomy, String concept);
 }

@@ -1,4 +1,4 @@
-package ch.alni.mcp.fred.adapter.webclient;
+package ch.alni.mcp.fred.adapter.http;
 
 import ch.alni.mcp.fred.port.FileType;
 import ch.alni.mcp.fred.port.FredApiClient;
@@ -16,14 +16,14 @@ import java.util.Optional;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-class FredApiWebClient implements FredApiClient {
-    private static final Logger LOG = getLogger(FredApiWebClient.class);
+class FredApiHttpClient implements FredApiClient {
+    private static final Logger LOG = getLogger(FredApiHttpClient.class);
 
     private final WebClient webClient;
     private final FredApiProperties properties;
     private final FredRetryProperties retryProperties;
 
-    FredApiWebClient(FredApiProperties properties, WebClient fredWebClient, FredRetryProperties retryProperties) {
+    FredApiHttpClient(FredApiProperties properties, WebClient fredWebClient, FredRetryProperties retryProperties) {
         this.properties = properties;
         this.webClient = fredWebClient;
         this.retryProperties = retryProperties;
