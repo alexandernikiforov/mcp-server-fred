@@ -31,3 +31,7 @@ springBoot {
         excludes = ['time']
     }
 }
+
+bootBuildImage {
+    imageName = "ghcr.io/alexandernikiforov/mcp-server-fred:${project['buildVersion']}"
+}

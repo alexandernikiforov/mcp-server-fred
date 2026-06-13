@@ -2,7 +2,7 @@ package ch.alni.mcp.edgar.tools;
 
 
 import ch.alni.mcp.edgar.service.EdgarService;
-import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

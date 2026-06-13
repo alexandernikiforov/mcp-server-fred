@@ -17,4 +17,12 @@ public interface FredService {
      * @return a Mono emitting the SeriesResponse containing the series data and associated metadata
      */
     Mono<SeriesResponse> getSeries(@NotNull Series series, @Valid @NotNull DateRange range);
+
+    /**
+     * Retrieves the latest available reading for a specified economic data series.
+     *
+     * @param series the economic data series for which the latest reading is to be retrieved; must not be null
+     * @return a Mono emitting the SeriesResponse containing the latest reading and associated metadata
+     */
+    Mono<SeriesResponse> getLastReading(@NotNull Series series);
 }
