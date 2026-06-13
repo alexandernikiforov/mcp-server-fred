@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @Service
@@ -28,8 +29,7 @@ public class FredMcpServer {
 
     @McpTool(description = "Returns 'ok'")
     public Mono<String> ping() {
-        // test how it works with exceptions
-        return Mono.error(new RuntimeException("nok"));
+        return Mono.just("ok");
     }
 
     @McpTool(name = "fred_economic_series_lookback",
@@ -70,4 +70,15 @@ public class FredMcpServer {
         return fredService.getSeries(series, new DateRange(start, end));
     }
 
+    @McpTool(name = "fred_economic_available_series",
+            description = "Returns the name of economic series from FRED available via this server",
+            annotations = @McpTool.McpAnnotations(
+                    title = "Available Fred Economic Series",
+                    readOnlyHint = true,
+                    destructiveHint = false,
+                    openWorldHint = false
+            ))
+    public Mono<List<Series>> listSeries() {
+        return fredService.listSeries().collectList();
+    }
 }

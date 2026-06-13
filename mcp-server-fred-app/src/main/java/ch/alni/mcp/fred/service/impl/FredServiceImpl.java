@@ -8,16 +8,22 @@ import ch.alni.mcp.fred.service.FredService;
 import ch.alni.mcp.fred.service.LookbackPeriod;
 import ch.alni.mcp.fred.service.Series;
 import ch.alni.mcp.fred.service.SeriesResponse;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Clock;
+import java.util.EnumSet;
 import java.util.Objects;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 @Validated
 class FredServiceImpl implements FredService {
+    private static final Logger LOG = getLogger(FredServiceImpl.class);
 
     public static final String MISSING_OBSERVATION_VALUE = ".";
 
@@ -75,5 +81,11 @@ class FredServiceImpl implements FredService {
                                 .stream()
                                 .toList())
                         .build());
+    }
+
+    @Override
+    public Flux<Series> listSeries() {
+        return Flux.fromIterable(EnumSet.allOf(Series.class))
+                .doOnNext(series -> LOG.info("Found series: {}", series));
     }
 }

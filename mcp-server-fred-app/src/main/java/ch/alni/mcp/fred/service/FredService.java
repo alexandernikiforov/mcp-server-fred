@@ -2,6 +2,7 @@ package ch.alni.mcp.fred.service;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -25,4 +26,6 @@ public interface FredService {
      * @return a Mono emitting the SeriesResponse containing the latest reading and associated metadata
      */
     Mono<SeriesResponse> getLastReading(@NotNull Series series);
+
+    Flux<Series> listSeries();
 }
