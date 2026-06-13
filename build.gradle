@@ -25,7 +25,7 @@ allprojects {
     version = '1.0.0-SNAPSHOT'
 
     ext {
-        buildNumber = System.getenv('CI') ? System.getenv('CI_BUILD_NUMBER') : '0'
+        buildNumber = System.getenv('CI') ? System.getenv('GITHUB_RUN_NUMBER') : '0'
         buildVersion = version + '.' + buildNumber
     }
 }

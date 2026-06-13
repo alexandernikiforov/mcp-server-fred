@@ -42,6 +42,10 @@ jobs:
       - name: Build Docker image for FRED
         run: ./gradlew mcp-server-fred-app:bootBuildImage
 
+      - name: Push FRED Docker image to GitHub Container Registry
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/mcp-server-fred:${{ github.run_number }}
+
       - name: Upload unit-test report
         uses: actions/upload-artifact@v6
         with:
