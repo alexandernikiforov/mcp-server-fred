@@ -26,7 +26,7 @@ allprojects {
 
     ext {
         buildNumber = System.getenv('CI') ? System.getenv('GITHUB_RUN_NUMBER') : '0'
-        buildVersion = version + '.' + buildNumber
+        buildVersion = buildNumber
     }
 }
 
