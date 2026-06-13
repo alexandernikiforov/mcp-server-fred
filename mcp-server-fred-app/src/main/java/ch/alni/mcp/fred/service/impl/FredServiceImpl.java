@@ -85,7 +85,6 @@ class FredServiceImpl implements FredService {
 
     @Override
     public Flux<Series> listSeries() {
-        return Flux.fromIterable(EnumSet.allOf(Series.class))
-                .doOnNext(series -> LOG.info("Found series: {}", series));
+        return Flux.fromIterable(EnumSet.allOf(Series.class));
     }
 }
