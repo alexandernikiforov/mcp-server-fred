@@ -36,12 +36,10 @@ public enum Series {
     BAMLC0A4CBBB,
 
     /**
-     * Represents the BAMLH0A1HYBB economic data series, which is part of the ICE BofA High Yield Index. This series
-     * specifically tracks the performance of U.S. dollar-denominated below-investment-grade corporate bonds with
-     * maturities between 1 and 3 years.
-     * <p>
-     * It serves as a key benchmark for analyzing trends in the high-yield bond market and is often used in financial
-     * and economic analysis to assess risk and return in this sector.
+     * This data represents the Option-Adjusted Spread (OAS) of the ICE BofA US Corporate BB Index, a subset of the ICE
+     * BofA US High Yield Master II Index tracking the performance of US dollar denominated below investment grade rated
+     * corporate debt publicly issued in the US domestic market. This subset includes all securities with a given
+     * investment grade rating BB.
      */
     BAMLH0A1HYBB,
 
@@ -52,6 +50,15 @@ public enum Series {
      * overall economic conditions.
      */
     BAMLH0A2HYB,
+
+    /**
+     * ICE BofA CCC & Lower US High Yield Index Option-Adjusted Spread.
+     * <p>This data represents the Option-Adjusted Spread
+     * (OAS) of the ICE BofA US Corporate C Index, a subset of the ICE BofA US High Yield Master II Index tracking the
+     * performance of US dollar denominated below investment grade rated corporate debt publicly issued in the US
+     * domestic market. This subset includes all securities with a given investment grade rating CCC or below.
+     */
+    BAMLH0A3HYC,
 
     /**
      * US 10-Year Treasury Minus 2-Year Treasury Yield Spread. Represents the difference between the 10-year US Treasury
@@ -113,11 +120,37 @@ public enum Series {
     EFFR,
 
     /**
+     * 90-Day AA Financial Commercial Paper Interest Rate.
+     */
+    DCPF3M,
+
+    /**
+     * 90-Day AA Nonfinancial Commercial Paper Interest Rate.
+     */
+    DCPN3M,
+
+    /**
+     * The Chicago Fed's National Financial Conditions Index (NFCI) provides a comprehensive weekly update on U.S.
+     * financial conditions in money markets, debt and equity markets and the traditional and "shadow" banking systems.
+     * Positive values of the NFCI indicate financial conditions that are tighter than average, while negative values
+     * indicate financial conditions that are looser than average.
+     */
+    NFCI,
+
+    /**
      * Represents the T10YIE series, which is the 10-Year Breakeven Inflation Rate.
      * <p>
      * This economic indicator reflects the expected inflation over the next 10 years derived from the difference
      * between the 10-Year Treasury Nominal Yield (DGS10) and the 10-Year Treasury Inflation-Indexed Security (DFII10).
      * It is widely used by economists and policymakers to gauge expectations of future inflation.
      */
-    T10YIE
+    T10YIE,
+
+    /**
+     * 10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity.
+     * <p>
+     * Series is calculated as the spread between 10-Year Treasury Constant Maturity (BC_10YEAR) and 3-Month Treasury
+     * Constant Maturity (BC_3MONTH).
+     */
+    T10Y3M
 }
