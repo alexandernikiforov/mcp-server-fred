@@ -6,8 +6,6 @@ package ch.alni.mcp.fred.service;
  */
 public enum Series {
     /**
-     * ICE BofA US Corporate Index Option-Adjusted Spread.
-     * <p>
      * The ICE BofA Option-Adjusted Spreads (OASs) are the calculated spreads between a computed OAS index of all bonds
      * in a given rating category and a spot Treasury curve. An OAS index is constructed using each constituent bond's
      * OAS, weighted by market capitalization. The Corporate Master OAS uses an index of bonds that are considered
@@ -27,11 +25,10 @@ public enum Series {
     BAMLH0A0HYM2,
 
     /**
-     * ICE BofA BBB US Corporate Index Option-Adjusted Spread. The ICE BofA OASs are the calculated spreads between a
-     * computed OAS index of all bonds in a given rating category and a spot Treasury curve. An OAS index is constructed
-     * using each constituent bond's OAS, weighted by market capitalization. When the last calendar day of the month
-     * takes place on the weekend, weekend observations will occur as a result of month ending accrued interest
-     * adjustments.
+     * ICE BofA BBB US Corporate Index Option-Adjusted Spread. This data represents the Option-Adjusted Spread (OAS) of
+     * the ICE BofA BBB US Corporate Index, a subset of the ICE BofA US Corporate Master Index tracking the performance
+     * of US dollar denominated investment grade rated corporate debt publicly issued in the US domestic market. This
+     * subset includes all securities with a given investment grade rating BBB.
      */
     BAMLC0A4CBBB,
 
@@ -44,10 +41,10 @@ public enum Series {
     BAMLH0A1HYBB,
 
     /**
-     * Represents the ICE BofA High Yield Corporate Bond Option-Adjusted Spread (OAS) with a maturity classification of
-     * 2 years. This economic indicator, provided by the FRED API, measures the spread of high-yield corporate bonds
-     * relative to a comparable risk-free rate. The value can be used to analyze credit risk, market sentiment, and
-     * overall economic conditions.
+     * This data represents the Option-Adjusted Spread (OAS) of the ICE BofA US Corporate B Index, a subset of the ICE
+     * BofA US High Yield Master II Index tracking the performance of US dollar denominated below investment grade rated
+     * corporate debt publicly issued in the US domestic market. This subset includes all securities with a given
+     * investment grade rating B.
      */
     BAMLH0A2HYB,
 
@@ -66,6 +63,14 @@ public enum Series {
      * assessing the yield curve and potential recession signals.
      */
     T10Y2Y,
+
+    /**
+     * 10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity.
+     * <p>
+     * Series is calculated as the spread between 10-Year Treasury Constant Maturity (BC_10YEAR) and 3-Month Treasury
+     * Constant Maturity (BC_3MONTH).
+     */
+    T10Y3M,
 
     /**
      * US 10-Year Treasury Constant Maturity Rate. Represents the yield on a US Treasury security that has a constant
@@ -144,13 +149,5 @@ public enum Series {
      * between the 10-Year Treasury Nominal Yield (DGS10) and the 10-Year Treasury Inflation-Indexed Security (DFII10).
      * It is widely used by economists and policymakers to gauge expectations of future inflation.
      */
-    T10YIE,
-
-    /**
-     * 10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity.
-     * <p>
-     * Series is calculated as the spread between 10-Year Treasury Constant Maturity (BC_10YEAR) and 3-Month Treasury
-     * Constant Maturity (BC_3MONTH).
-     */
-    T10Y3M
+    T10YIE
 }

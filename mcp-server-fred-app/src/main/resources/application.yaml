@@ -6,6 +6,8 @@ spring:
         # building the server addressed over Streamable HTTP
         protocol: streamable
         type: async
+        capabilities:
+          completion: false
 
   # disconnect after 10 seconds to play nicely with Kubernetes
   lifecycle:

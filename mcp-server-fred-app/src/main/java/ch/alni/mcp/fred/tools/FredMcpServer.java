@@ -2,6 +2,7 @@ package ch.alni.mcp.fred.tools;
 
 import ch.alni.mcp.fred.service.DateRange;
 import ch.alni.mcp.fred.service.FredService;
+import ch.alni.mcp.fred.service.Language;
 import ch.alni.mcp.fred.service.LookbackPeriod;
 import ch.alni.mcp.fred.service.Series;
 import ch.alni.mcp.fred.service.SeriesResponse;
@@ -80,5 +81,23 @@ public class FredMcpServer {
             ))
     public Mono<List<Series>> listSeries() {
         return fredService.listSeries().collectList();
+    }
+
+    @McpTool(name = "credit_regime_prompt",
+            description = """
+                    Returns a prompt for generating a report on the current market credit regime using available FRED economic indicators.
+                    Use this tool when the user asks for a credit regime assessment, credit market conditions,
+                    or a macro credit environment report.
+                    """,
+            annotations = @McpTool.McpAnnotations(
+                    title = "Credit Regime Report Prompt",
+                    readOnlyHint = true,
+                    destructiveHint = false,
+                    openWorldHint = false
+            )
+    )
+    public Mono<String> getCreditRegimePrompt(
+            @McpToolParam(description = "The language in which the credit regime report should be written") Language language) {
+        return fredService.getCreditRegimePrompt(language);
     }
 }

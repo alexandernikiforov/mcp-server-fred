@@ -28,4 +28,6 @@ public interface FredService {
     Mono<SeriesResponse> getLastReading(@NotNull Series series);
 
     Flux<Series> listSeries();
+
+    Mono<String> getCreditRegimePrompt(Language language);
 }

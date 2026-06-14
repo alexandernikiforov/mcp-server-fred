@@ -1,0 +1,177 @@
+Use the FRED MCP server to write a human-readable credit and market regime report in the exact order below.
+Use only the available FRED MCP series and clearly state when a desired confirmation layer is not available from this server.
+
+The report must be written for an individual investor, not for a trading system.
+The report must be written in {language}.
+The goal is to explain what is happening in credit, rates, funding, volatility, and liquidity without requiring the reader to inspect individual FRED series.
+
+1. Data freshness
+
+Start by stating the latest available observation date for the key series.
+Mention clearly if any important series are stale, missing, or not directly comparable because of different publication dates.
+Do not overinterpret stale data.
+
+2. Credit system health
+
+Review investment-grade credit first.
+
+Use:
+- BAMLC0A0CM for broad IG OAS
+- BAMLC0A4CBBB for BBB OAS
+
+Explain whether high-quality corporate credit is stable, widening, or under stress.
+Explicitly answer the question: “Are lenders still willing to fund good borrowers?”
+Keep this section focused on system health, not risk appetite.
+
+3. Credit risk appetite
+
+Review high-yield credit next.
+
+Use:
+- BAMLH0A0HYM2 for broad HY OAS
+- BAMLH0A1HYBB for BB OAS
+- BAMLH0A2HYB for B OAS
+- BAMLH0A3HYC for CCC-and-below OAS
+
+Explain whether investors are still willing to fund risky borrowers.
+
+Distinguish between:
+- normal discrimination against weak borrowers,
+- broad high-yield deterioration,
+- stress propagating upward from CCC to B, BB, BBB, and IG.
+
+Explicitly state whether credit stress is isolated in weak credit or spreading through the capital structure.
+
+4. Rates and curve
+
+Review the Treasury and inflation-rate backdrop.
+
+Use:
+- DGS2
+- DGS10
+- DGS30
+- T10Y2Y
+- T10Y3M
+- DFII10
+- T10YIE
+
+Explain what is driving pressure in rates, if any:
+- inflation expectations,
+- real yields,
+- term premium,
+- recession expectations,
+- or a mixed regime.
+
+Distinguish between:
+- an uncomfortable long-end / real-rate regime,
+- a recessionary bull-flattening regime,
+- an inflationary bear-steepening regime,
+- a funding-stress regime.
+
+Explain what the rates backdrop means for long-duration assets and equity valuations.
+
+5. Funding and liquidity
+
+Review short-term funding and financial conditions.
+
+Use:
+- SOFR
+- EFFR
+- SOFR minus EFFR
+- DCPF3M minus EFFR
+- DCPN3M minus EFFR
+- NFCI
+
+Explain whether funding markets are normal, tightening, or stressed.
+Explicitly answer the question: “Is there evidence of plumbing stress?”
+Mention whether commercial paper and repo/funding indicators confirm or contradict the credit-spread picture.
+
+6. Volatility
+
+Review equity volatility.
+
+Use:
+- VIXCLS
+- recent persistence above 20
+- recent persistence above 25
+
+Explain whether volatility is:
+- ordinary equity noise,
+- a caution signal,
+- or evidence of broader market stress.
+
+Do not treat a one-day VIX spike as a regime change.
+Volatility must be interpreted as confirmation, not as the primary signal.
+
+7. Regime classification
+
+Assign classification for each layer:
+
+- Credit:
+- Funding:
+- Rates:
+- Volatility:
+- Liquidity:
+
+Then assign one overall regime using the portfolio rulebook terms:
+
+- GREEN
+- YELLOW
+- RED
+- BLACK
+
+The regime label must be accompanied by a clear explanation. Do not leave the label unexplained.
+The classification should be conservative.
+If evidence is mixed, prefer the lower-severity classification and explain what confirmation is missing.
+A regime should not be upgraded from GREEN to YELLOW, RED, or BLACK unless deterioration is persistent and confirmed across more than one layer.
+
+8. Final verdict
+
+Write a concise final verdict in normal prose.
+
+The verdict must distinguish clearly between:
+- price discomfort,
+- equity volatility,
+- long-end rate pressure,
+- credit stress,
+- funding stress,
+- systemic liquidity stress.
+
+Explicitly state whether the current regime looks like:
+- functioning late-cycle markets,
+- credit deterioration,
+- funding stress,
+- recession risk,
+- or systemic stress.
+
+9. Portfolio interpretation
+
+Translate the market regime into portfolio-relevant interpretation, not mechanical instructions.
+
+Explain what the regime implies for:
+- scheduled core deployment,
+- excessive tactical activity,
+- long-duration Treasury exposure,
+- cash / SGOV optionality,
+- equity overlays,
+- metals as insurance.
+
+Do not give trade commands.
+Do not introduce new investment ideas.
+Do not recommend tactical trades unless they are directly necessary to explain the regime.
+
+10. Monitoring checklist
+
+End with a short checklist of what would change the assessment.
+List the few indicators that would matter most over the next 1–4 weeks.
+
+Focus on:
+- IG OAS trend,
+- HY OAS trend,
+- BBB / BB / B / CCC propagation,
+- SOFR / EFFR and commercial paper stress,
+- NFCI direction,
+- VIX persistence,
+- curve and real-yield behavior.
+
+The checklist should help the reader know what to watch next without checking every series manually.
