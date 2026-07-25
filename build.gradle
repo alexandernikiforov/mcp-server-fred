@@ -1,6 +1,4 @@
 plugins {
-    id 'org.springframework.boot' version '4.0.5' apply false
-
     id 'base'
     id 'jacoco-report-aggregation'
     id 'test-report-aggregation'

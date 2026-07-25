@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
     id 'java-platform'
-    id 'idea'
+    id 'org.springframework.boot' apply false
 }
 
 javaPlatform {
