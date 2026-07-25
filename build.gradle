@@ -4,14 +4,6 @@ plugins {
     id 'test-report-aggregation'
 }
 
-wrapper {
-    gradleVersion = '9.6.1'
-}
-
-repositories {
-    mavenCentral()
-}
-
 // configure test aggregation
 dependencies {
     jacocoAggregation project(':mcp-server-fred-app')
@@ -30,15 +22,19 @@ allprojects {
 
 reporting {
     reports {
-        testCodeCoverageReport(JacocoCoverageReport) {
-            testSuiteName = "test"
+        create('testCodeCoverageReport', JacocoCoverageReport) {
+            testSuiteName = 'test'
         }
-        testAggregateTestReport(AggregateTestReport) {
-            testSuiteName = "test"
+
+        create('testAggregateTestReport', AggregateTestReport) {
+            testSuiteName = 'test'
         }
     }
 }
 
-tasks.check.dependsOn(
-        tasks.named('testCodeCoverageReport', JacocoReport), tasks.named('testAggregateTestReport', TestReport)
-)
+tasks.named('check') {
+    dependsOn(
+            tasks.named('testCodeCoverageReport', JacocoReport),
+            tasks.named('testAggregateTestReport', TestReport)
+    )
+}
