@@ -10,10 +10,10 @@ dependencies {
     testReportAggregation project(':mcp-server-fred-app')
 }
 
-allprojects {
-    group = 'ch.alni'
-    version = '1.0.0-SNAPSHOT'
+group = 'ch.alni'
+version = '1.0.0-SNAPSHOT'
 
+allprojects {
     ext {
         buildNumber = System.getenv('CI') ? System.getenv('GITHUB_RUN_NUMBER') : '0'
         buildVersion = buildNumber

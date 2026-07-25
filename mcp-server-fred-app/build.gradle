@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
     id 'project-java-conventions'
     id 'org.springframework.boot'
@@ -32,6 +34,11 @@ springBoot {
     }
 }
 
-bootBuildImage {
-    imageName = "ghcr.io/alexandernikiforov/mcp-server-fred:${project['buildVersion']}"
+def buildVersion = providers.environmentVariable('GITHUB_RUN_NUMBER')
+        .orElse('0')
+
+tasks.named('bootBuildImage', BootBuildImage) {
+    imageName = buildVersion.map {
+        "ghcr.io/alexandernikiforov/mcp-server-fred:${it}" as String
+    }
 }
