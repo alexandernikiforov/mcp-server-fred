@@ -41,4 +41,5 @@ tasks.named('bootBuildImage', BootBuildImage) {
     imageName = buildVersion.map {
         "ghcr.io/alexandernikiforov/mcp-server-fred:${it}" as String
     }
+    pullPolicy = "IF_NOT_PRESENT"
 }
