@@ -28,12 +28,22 @@ public class EdgarMcpServer {
         this.clock = clock;
     }
 
-    @McpTool(description = "Returns 'ok'")
+    @McpTool(description = "Returns 'ok'", annotations = @McpTool.McpAnnotations(
+            destructiveHint = false,
+            idempotentHint = true,
+            readOnlyHint = true,
+            openWorldHint = false
+    ))
     public Mono<String> ping() {
         return Mono.just("ok");
     }
 
-    @McpTool(description = "Returns the CIK for the given ticker")
+    @McpTool(description = "Returns the CIK for the given ticker", annotations = @McpTool.McpAnnotations(
+            destructiveHint = false,
+            idempotentHint = true,
+            readOnlyHint = true,
+            openWorldHint = false
+    ))
     public Mono<Long> resolveCik(String ticker) {
         return Mono.just(edgarService.resolveCik(ticker));
     }
