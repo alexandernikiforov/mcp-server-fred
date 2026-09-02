@@ -21,7 +21,7 @@ dependencies {
     }
 
     api platform(SpringBootPlugin.BOM_COORDINATES)
-    api platform('org.springframework.ai:spring-ai-bom:2.0.0')
+    api platform('org.springframework.ai:spring-ai-bom:2.0.1')
     api platform('com.squareup.okhttp3:okhttp-bom:5.2.0')
     api platform('io.github.resilience4j:resilience4j-bom:2.4.0')
 }
