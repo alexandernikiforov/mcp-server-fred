@@ -1,60 +1,43 @@
 package ch.alni.mcp.edgar.adapter.webclient;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.http.client.HttpClientSettings;
-import org.springframework.boot.http.client.ReactorHttpClientBuilder;
+import org.springframework.boot.webclient.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
 
-@Configuration
-@EnableConfigurationProperties({
-        EdgarWebClientProperties.class,
-        EdgarDataWebClientProperties.class,
-        EdgarArchiveWebClientProperties.class
-})
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(EdgarWebClientProperties.class)
 class EdgarWebClientConfiguration {
 
-    private final EdgarWebClientProperties properties;
-    private final EdgarDataWebClientProperties dataClientProperties;
-    private final EdgarArchiveWebClientProperties archiveClientProperties;
+    private final EdgarWebClientProperties webClientProperties;
 
-    EdgarWebClientConfiguration(EdgarWebClientProperties properties,
-                                EdgarDataWebClientProperties dataClientProperties,
-                                EdgarArchiveWebClientProperties archiveClientProperties) {
-        this.properties = properties;
-        this.dataClientProperties = dataClientProperties;
-        this.archiveClientProperties = archiveClientProperties;
+    EdgarWebClientConfiguration(EdgarWebClientProperties webClientProperties) {
+        this.webClientProperties = webClientProperties;
+    }
+
+    @Bean
+    WebClientCustomizer webClientCustomizer() {
+        return builder -> builder
+                .defaultHeader("User-Agent", webClientProperties.userAgent())
+                .defaultHeader("Accept-Encoding", "gzip", "deflate");
     }
 
     @Bean
     WebClient edgarDataWebClient(WebClient.Builder webClientBuilder) {
-        final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(properties.getReadTimeout())
-                .withConnectTimeout(properties.getConnectTimeout()));
-        final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-        return webClientBuilder.baseUrl(dataClientProperties.getBaseUrl())
-                .defaultHeader("User-Agent", properties.getUserAgent())
-                .defaultHeader("Accept-Encoding", "gzip", "deflate")
+        final EdgarWebClientProperties.Data data = webClientProperties.data();
+        return webClientBuilder.baseUrl(data.baseUrl().toString())
                 .codecs(configurer -> configurer.defaultCodecs()
-                        .maxInMemorySize(dataClientProperties.getMaxHttpResponseMemorySizeInKib() * 1024))
-                .clientConnector(connector)
+                        .maxInMemorySize((int) data.maxInMemorySize().toBytes()))
                 .build();
     }
 
     @Bean
     WebClient edgarArchiveWebClient(WebClient.Builder webClientBuilder) {
-        final HttpClient httpClient = new ReactorHttpClientBuilder().build(HttpClientSettings.defaults()
-                .withReadTimeout(properties.getReadTimeout())
-                .withConnectTimeout(properties.getConnectTimeout()));
-        final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-        return webClientBuilder.baseUrl(archiveClientProperties.getBaseUrl())
-                .defaultHeader("User-Agent", properties.getUserAgent())
-                .defaultHeader("Accept-Encoding", "gzip", "deflate")
-                .clientConnector(connector)
+        final EdgarWebClientProperties.Archive archive = webClientProperties.archive();
+        return webClientBuilder.baseUrl(archive.baseUrl().toString())
+                .codecs(configurer -> configurer.defaultCodecs()
+                        .maxInMemorySize((int) archive.maxInMemorySize().toBytes()))
                 .build();
     }
 

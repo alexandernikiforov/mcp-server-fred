@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -19,7 +19,7 @@ class EdgarArchiveHttpClient implements EdgarArchiveClient {
     @RateLimiter(name = "edgar")
     public Mono<String> getAccession(long cik, String accession, String primaryDocument) {
         return archiveWebClient.get()
-                .uri(EdgarApiPaths.ACCESSION_PATH, CikFormatter.formatCik(cik), accession, primaryDocument)
+                .uri(EdgarArchivePaths.ACCESSION_PATH, cik, accession, primaryDocument)
                 .retrieve()
                 .bodyToMono(String.class);
     }

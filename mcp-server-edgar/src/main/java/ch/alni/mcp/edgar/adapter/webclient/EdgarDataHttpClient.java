@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import ch.alni.mcp.edgar.port.CompanyConceptResponse;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
@@ -22,7 +22,7 @@ class EdgarDataHttpClient implements EdgarDataClient {
     @RateLimiter(name = "edgar")
     public Mono<CompanySubmissionsResponse> getCompanySubmissions(long cik) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.SUBMISSIONS_PATH, CikFormatter.formatCik(cik))
+                .uri(EdgarDataPaths.SUBMISSIONS_PATH, CikFormatter.formatCik(cik))
                 .retrieve()
                 .bodyToMono(CompanySubmissionsResponse.class);
     }
@@ -31,7 +31,7 @@ class EdgarDataHttpClient implements EdgarDataClient {
     @RateLimiter(name = "edgar")
     public Mono<CompanyFactsResponse> getCompanyFacts(long cik) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.COMPANY_FACTS_PATH, CikFormatter.formatCik(cik))
+                .uri(EdgarDataPaths.COMPANY_FACTS_PATH, CikFormatter.formatCik(cik))
                 .retrieve()
                 .bodyToMono(CompanyFactsResponse.class);
     }
@@ -40,7 +40,7 @@ class EdgarDataHttpClient implements EdgarDataClient {
     @RateLimiter(name = "edgar")
     public Mono<CompanyConceptResponse> getCompanyConcept(long cik, String taxonomy, String concept) {
         return dataWebClient.get()
-                .uri(EdgarApiPaths.COMPANY_CONCEPT_PATH, CikFormatter.formatCik(cik), taxonomy, concept)
+                .uri(EdgarDataPaths.COMPANY_CONCEPT_PATH, CikFormatter.formatCik(cik), taxonomy, concept)
                 .retrieve()
                 .bodyToMono(CompanyConceptResponse.class);
     }

@@ -1,10 +1,11 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import io.github.resilience4j.springboot.ratelimiter.autoconfigure.RateLimiterAutoConfiguration;
 import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.webclient.test.autoconfigure.WebClientTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -12,9 +13,11 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.io.IOException;
 
-@SpringJUnitConfig(classes = {EdgarClientTestConfiguration.class, WebClientAutoConfiguration.class, RateLimiterAutoConfiguration.class})
+@WebClientTest
+@SpringJUnitConfig(classes = {EdgarWebClientConfiguration.class, EdgarClientTestConfiguration.class})
+@ImportAutoConfiguration(RateLimiterAutoConfiguration.class)
 @TestPropertySource("classpath:/edgar-client-test.properties")
-class EdgarClientTestSupport {
+abstract class EdgarClientTestSupport {
 
     static final MockWebServer server = new MockWebServer();
 
@@ -30,6 +33,8 @@ class EdgarClientTestSupport {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("edgar.mock.port", server::getPort);
+        final String baseUrl = "http://localhost:" + server.getPort();
+        registry.add("edgar.webclient.archive.base-url", () -> baseUrl);
+        registry.add("edgar.webclient.data.base-url", () -> baseUrl);
     }
 }

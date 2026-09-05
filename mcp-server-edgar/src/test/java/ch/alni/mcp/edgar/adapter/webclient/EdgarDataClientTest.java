@@ -1,4 +1,4 @@
-package ch.alni.mcp.edgar.adapter.http;
+package ch.alni.mcp.edgar.adapter.webclient;
 
 import ch.alni.mcp.edgar.port.CompanyConceptResponse;
 import ch.alni.mcp.edgar.port.CompanyFact;
@@ -68,7 +68,7 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
 
         assertThat(recordedRequest.getUrl().host()).isEqualTo("localhost");
         assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(
-                EdgarApiPaths.COMPANY_FACTS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
+                EdgarDataPaths.COMPANY_FACTS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
         assertThat(recordedRequest.getMethod()).isEqualTo("GET");
     }
 
@@ -103,7 +103,7 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
 
         assertThat(recordedRequest.getUrl().host()).isEqualTo("localhost");
         assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(
-                EdgarApiPaths.COMPANY_CONCEPT_PATH
+                EdgarDataPaths.COMPANY_CONCEPT_PATH
                         .replace("{cik}", CikFormatter.formatCik(320193))
                         .replace("{taxonomy}", taxonomy)
                         .replace("{concept}", concept));
@@ -140,7 +140,7 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
 
         assertThat(recordedRequest.getUrl().host()).isEqualTo("localhost");
         assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(
-                EdgarApiPaths.SUBMISSIONS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
+                EdgarDataPaths.SUBMISSIONS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
         assertThat(recordedRequest.getMethod()).isEqualTo("GET");
     }
 
