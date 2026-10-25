@@ -1,7 +1,10 @@
 package ch.alni.mcp.edgar.tools;
 
 
+import ch.alni.mcp.edgar.core.Taxonomy;
+import ch.alni.mcp.edgar.core.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -20,11 +23,13 @@ import java.time.Clock;
 public class EdgarMcpServer {
 
     private final EdgarService edgarService;
+    private final TaxonomyService taxonomyService;
 
     private final Clock clock;
 
-    EdgarMcpServer(EdgarService edgarService, Clock clock) {
+    EdgarMcpServer(EdgarService edgarService, TaxonomyService taxonomyService, Clock clock) {
         this.edgarService = edgarService;
+        this.taxonomyService = taxonomyService;
         this.clock = clock;
     }
 
@@ -46,6 +51,19 @@ public class EdgarMcpServer {
     ))
     public Mono<Long> resolveCik(String ticker) {
         return Mono.just(edgarService.resolveCik(ticker));
+    }
+
+    @McpTool(name = "get_concept_metadata",
+            generateOutputSchema = true,
+            description = "Returns metadata for the given taxonomy and concept, including description",
+            annotations = @McpTool.McpAnnotations(
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    readOnlyHint = true,
+                    openWorldHint = false
+            ))
+    public Mono<TaxonomyMetadata> getConceptMetadata(Taxonomy taxonomy, String concept) {
+        return Mono.justOrEmpty(taxonomyService.getConceptMetadata(taxonomy, concept));
     }
 
 }

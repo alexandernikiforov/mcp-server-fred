@@ -1,16 +1,21 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.core.TaxonomyConcept;
+import ch.alni.mcp.edgar.core.TaxonomyLabel;
+import ch.alni.mcp.edgar.core.TaxonomyMetadata;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.xml.XMLConstants;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -25,18 +30,68 @@ class UsGaapConceptResolver implements InitializingBean {
     private static final String DOC_FILENAME = "us-gaap-doc-2026.xml";
     private static final String LAB_FILENAME = "us-gaap-lab-2026.xml";
 
+    private static final DocumentBuilderFactory documentBuilderFactory = createDocumentBuilderFactory();
+    private final Map<String, TaxonomyConcept> taxonomyConcepts = new HashMap<>();
+    private final Map<String, TaxonomyLabel> taxonomyLabels = new HashMap<>();
+    @Value("classpath:us-gaap-2026.zip")
+    private Resource taxonomyResource;
+
+    private UsGaapConceptResolver() {
+    }
+
+    static void main() throws Exception {
+        new UsGaapConceptResolver().afterPropertiesSet();
+    }
+
+    private static DocumentBuilderFactory createDocumentBuilderFactory() {
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        // Security hardening
+        try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
+            factory.setNamespaceAware(true);
+        }
+        catch (ParserConfigurationException e) {
+            throw new IllegalStateException("Cannot initialize DocumentBuilderFactory", e);
+        }
+
+        return factory;
+    }
+
+    public @Nullable TaxonomyMetadata getTaxonomyMetadata(String conceptKey) {
+        final TaxonomyConcept concept = this.taxonomyConcepts.get(conceptKey);
+        if (concept == null) {
+            return null;
+        }
+        final TaxonomyLabel label = this.taxonomyLabels.get(concept.id());
+        return TaxonomyMetadata.builder()
+                .tag(concept.name())
+                .balance(concept.balance())
+                .periodType(concept.periodType())
+                .dataType(concept.type())
+                .documentation(label.text())
+                .build();
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        final XMLInputFactory xmlInputFactory = createXMLInputFactory();
+        final XBRLConceptParser parser = new XBRLConceptParser(documentBuilderFactory);
 
-        try (final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(TAXONOMY_FILENAME);
-             final ZipInputStream zipInputStream = new ZipInputStream(Objects.requireNonNull(resourceAsStream))) {
+        try (final InputStream resourceAsStream = taxonomyResource.getInputStream();
+             final ZipInputStream zipInputStream = new ZipInputStream(resourceAsStream)) {
             ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 switch (entry.getName()) {
                     case XSD_FILENAME:
+                        this.taxonomyConcepts.putAll(parser.parseConceptsXsd(zipInputStream));
                         break;
                     case DOC_FILENAME:
+                        this.taxonomyLabels.putAll(parser.parseDocs(zipInputStream));
                         break;
                     case LAB_FILENAME:
                         break;
@@ -47,53 +102,4 @@ class UsGaapConceptResolver implements InitializingBean {
         }
     }
 
-    private void processDoc(final XMLInputFactory xmlInputFactory, final ZipInputStream zipInputStream) throws XMLStreamException {
-        final XMLStreamReader reader = xmlInputFactory.createXMLStreamReader(zipInputStream);
-
-        try {
-            while (reader.hasNext()) {
-                final int event = reader.next();
-
-                if (event == XMLStreamConstants.START_ELEMENT) {
-                    final String elementName = reader.getLocalName();
-
-                    if ("item".equals(elementName)) {
-                        String id = reader.getAttributeValue(null, "id");
-                        System.out.println("Item id: " + id);
-                    }
-                }
-
-                if (event == XMLStreamConstants.CHARACTERS) {
-                    String text = reader.getText().trim();
-
-                    if (!text.isEmpty()) {
-                        System.out.println("Text: " + text);
-                    }
-                }
-            }
-        }
-        finally {
-            reader.close();
-        }
-    }
-
-    private void processLab(final XMLInputFactory xmlInputFactory, final ZipInputStream zipInputStream) {
-
-    }
-
-    private void processXsd(final XMLInputFactory xmlInputFactory, final ZipInputStream zipInputStream) {
-
-    }
-
-    private XMLInputFactory createXMLInputFactory() {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
-
-        // Security: prevent XXE and external entity attacks
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-        return factory;
-    }
 }

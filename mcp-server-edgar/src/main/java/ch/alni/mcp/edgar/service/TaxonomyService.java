@@ -1,12 +1,14 @@
 package ch.alni.mcp.edgar.service;
 
 import ch.alni.mcp.edgar.core.Taxonomy;
-import reactor.core.publisher.Mono;
+import ch.alni.mcp.edgar.core.TaxonomyMetadata;
+
+import java.util.Optional;
 
 /**
  * TODO: javadoc
  */
 public interface TaxonomyService {
 
-    Mono<ConceptMetadata> getConceptMetadata(Taxonomy taxonomy, String concept);
+    Optional<TaxonomyMetadata> getConceptMetadata(Taxonomy taxonomy, String tag);
 }
