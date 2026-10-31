@@ -4,7 +4,9 @@ package ch.alni.mcp.edgar.service.impl;
 import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
+import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
+import ch.alni.mcp.edgar.service.SubmissionHistory.Submission;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -18,13 +20,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Filing;
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Observation;
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.PeriodValue;
 
 final class Converter {
-    public static final int MAX_LATEST_FILINGS = 12;
     private static final Set<String> SUPPORTED_FORMS = Set.of(
             "20-F",
             "20-F/A",
@@ -190,6 +192,20 @@ final class Converter {
         }
 
         return ReportingPeriod.UNSPECIFIED;
+    }
+
+    static List<Submission> toSubmissions(CompanySubmissionsResponse response, int latestSubmissions) {
+        final CompanySubmissionsResponse.RecentFilings filings = response.filings().recent();
+        return IntStream.range(0, filings.form().size())
+                .filter(i -> SUPPORTED_FORMS.contains(filings.form().get(i)))
+                .limit(latestSubmissions)
+                .mapToObj(i -> new Submission(
+                        filings.accessionNumber().get(i),
+                        filings.filingDate().get(i),
+                        filings.form().get(i),
+                        filings.primaryDocument().get(i)
+                ))
+                .toList();
     }
 
     enum ReportingPeriod {

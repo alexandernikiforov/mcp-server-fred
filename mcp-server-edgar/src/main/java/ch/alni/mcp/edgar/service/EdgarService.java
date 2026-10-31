@@ -25,4 +25,13 @@ public interface EdgarService {
      * @return A Flux stream of {@link ConceptFilingHistory} containing filing history data.
      */
     Mono<ConceptFilingHistoryResponse> getReportedHistory(String ticker, Set<Concept> concepts, FiscalYearCountType fiscalYearCount);
+
+    /**
+     * Retrieves a history of the company's latest submissions based on the ticker symbol.
+     *
+     * @param ticker            The ticker symbol of the company for which the submission history is being requested.
+     * @param latestSubmissions The number of the most recent submissions to retrieve.
+     * @return A {@link Mono} emitting the {@link SubmissionHistory} containing the requested submission details.
+     */
+    Mono<SubmissionHistory> getSubmissionHistory(String ticker, int latestSubmissions);
 }

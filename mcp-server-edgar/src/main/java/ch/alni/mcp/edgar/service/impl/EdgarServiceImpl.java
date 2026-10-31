@@ -5,6 +5,7 @@ import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.SubmissionHistory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -39,6 +40,20 @@ class EdgarServiceImpl implements EdgarService {
                         .concatMap(concept -> Mono.justOrEmpty(Converter.toReportedHistory(factsResponse, concept, fiscalYearCount.getValue())))
                         .collectList()
                         .map(ConceptFilingHistoryResponse::new)
+                );
+    }
+
+    @Override
+    public Mono<SubmissionHistory> getSubmissionHistory(String ticker, int latestSubmissions) {
+        final Long cik = tickerResolver.resolve(ticker);
+        if (cik == null) {
+            return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));
+        }
+
+        return dataClient.getCompanySubmissions(cik)
+                .flatMap(response -> Flux.fromIterable(Converter.toSubmissions(response, latestSubmissions))
+                        .collectList()
+                        .map(SubmissionHistory::new)
                 );
     }
 

@@ -7,6 +7,7 @@ import ch.alni.mcp.edgar.core.Taxonomy;
 import ch.alni.mcp.edgar.core.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.SubmissionHistory;
 import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -81,6 +82,21 @@ public class EdgarMcpServer {
             @McpToolParam(description = "The set of concepts to retrieve the history of filings") Set<Concept> concepts,
             @McpToolParam(description = "How many fiscal years to include in the history") FiscalYearCountType fiscalYearCount) {
         return edgarService.getReportedHistory(ticker, concepts, fiscalYearCount);
+    }
+
+    @McpTool(name = "get_latest_submissions",
+            generateOutputSchema = true,
+            description = "Returns N specified latest submission descriptions, including accession number and primary document",
+            annotations = @McpTool.McpAnnotations(
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    readOnlyHint = true,
+                    openWorldHint = false
+            ))
+    public Mono<SubmissionHistory> getSubmissionHistory(
+            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
+            @McpToolParam(description = "How many submissions to fetch") int latestSubmissions) {
+        return edgarService.getSubmissionHistory(ticker, latestSubmissions);
     }
 
 }
