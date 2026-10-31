@@ -22,6 +22,7 @@ import java.util.Map;
 public record CompanyFactsResponse(
         long cik,
         String entityName,
+        // taxonomy -> (tag -> definition)
         Map<String, Map<String, FactDefinition>> facts
 ) {
 
@@ -37,6 +38,7 @@ public record CompanyFactsResponse(
     public record FactDefinition(
             String label,
             String description,
+            // unit -> facts
             Map<String, List<CompanyFact>> units
     ) {
     }
