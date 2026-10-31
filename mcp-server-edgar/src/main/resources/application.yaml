@@ -12,6 +12,11 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 10s
 
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=6,expireAfterWrite=2h
+
 resilience4j:
   ratelimiter:
     instances:
