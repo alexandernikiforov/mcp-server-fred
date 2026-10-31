@@ -76,7 +76,7 @@ public class EdgarMcpServer {
                     readOnlyHint = true,
                     openWorldHint = false
             ))
-    public Flux<ConceptFilingHistory> getConceptMetadata(
+    public Flux<ConceptFilingHistory> getConceptFilingHistory(
             @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
             @McpToolParam(description = "The set of concepts to retrieve the history of filings") Set<Concept> concepts) {
         return edgarService.getReportedHistory(ticker, concepts);

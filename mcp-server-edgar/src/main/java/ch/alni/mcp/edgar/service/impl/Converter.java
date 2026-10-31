@@ -148,7 +148,7 @@ final class Converter {
         return reportingPeriod == otherReportingPeriod;
     }
 
-    private static ReportingPeriod classifyPeriod(@Nullable LocalDate start, @NonNull LocalDate end) {
+    static ReportingPeriod classifyPeriod(@Nullable LocalDate start, @NonNull LocalDate end) {
         if (start == null) {
             return ReportingPeriod.UNSPECIFIED;
         }
@@ -171,7 +171,7 @@ final class Converter {
         return ReportingPeriod.UNSPECIFIED;
     }
 
-    private enum ReportingPeriod {
+    enum ReportingPeriod {
         UNSPECIFIED,
         ONE_QUARTER,
         TWO_QUARTERS,
@@ -179,6 +179,6 @@ final class Converter {
         ONE_YEAR
     }
 
-    private record FactKey(String accn, int fy, String fp, String form, LocalDate filed) {
+    record FactKey(String accn, int fy, String fp, String form, LocalDate filed) {
     }
 }

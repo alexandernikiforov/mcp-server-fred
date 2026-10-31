@@ -4,15 +4,12 @@ import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import ch.alni.mcp.edgar.service.EdgarService;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
-@Validated
 @Service
 class EdgarServiceImpl implements EdgarService {
 
@@ -30,9 +27,7 @@ class EdgarServiceImpl implements EdgarService {
     }
 
     @Override
-    public Flux<ConceptFilingHistory> getReportedHistory(
-            @NotNull String ticker,
-            Set<Concept> concepts) {
+    public Flux<ConceptFilingHistory> getReportedHistory(String ticker, Set<Concept> concepts) {
         final Long cik = tickerResolver.resolve(ticker);
         if (cik == null) {
             return Flux.error(new IllegalArgumentException("CIK not found for " + ticker));
