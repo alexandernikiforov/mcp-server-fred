@@ -1,8 +1,9 @@
 package ch.alni.mcp.edgar.service.impl;
 
 import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
-import ch.alni.mcp.edgar.service.ConceptFilingHistory;
+import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -27,15 +28,18 @@ class EdgarServiceImpl implements EdgarService {
     }
 
     @Override
-    public Flux<ConceptFilingHistory> getReportedHistory(String ticker, Set<Concept> concepts) {
+    public Mono<ConceptFilingHistoryResponse> getReportedHistory(String ticker, Set<Concept> concepts, FiscalYearCountType fiscalYearCount) {
         final Long cik = tickerResolver.resolve(ticker);
         if (cik == null) {
-            return Flux.error(new IllegalArgumentException("CIK not found for " + ticker));
+            return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));
         }
 
         return dataClient.getCompanyFacts(cik)
-                .flatMapMany(factsResponse -> Flux.fromIterable(concepts)
-                        .concatMap(concept -> Mono.justOrEmpty(Converter.toReportedHistory(factsResponse, concept))));
+                .flatMap(factsResponse -> Flux.fromIterable(concepts)
+                        .concatMap(concept -> Mono.justOrEmpty(Converter.toReportedHistory(factsResponse, concept, fiscalYearCount.getValue())))
+                        .collectList()
+                        .map(ConceptFilingHistoryResponse::new)
+                );
     }
 
 }

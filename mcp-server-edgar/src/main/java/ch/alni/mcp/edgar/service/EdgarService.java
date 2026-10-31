@@ -1,7 +1,8 @@
 package ch.alni.mcp.edgar.service;
 
 import ch.alni.mcp.edgar.core.Concept;
-import reactor.core.publisher.Flux;
+import ch.alni.mcp.edgar.core.FiscalYearCountType;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
@@ -18,9 +19,10 @@ public interface EdgarService {
     /**
      * Retrieves the reported filing history for the specified ticker and concepts.
      *
-     * @param ticker   The ticker symbol of the company for which the filing history is requested.
-     * @param concepts A list of concept identifiers to retrieve filing history for.
+     * @param ticker          The ticker symbol of the company for which the filing history is requested.
+     * @param concepts        A list of concept identifiers to retrieve filing history for.
+     * @param fiscalYearCount The maximum number of fiscal years to include in the filing history.
      * @return A Flux stream of {@link ConceptFilingHistory} containing filing history data.
      */
-    Flux<ConceptFilingHistory> getReportedHistory(String ticker, Set<Concept> concepts);
+    Mono<ConceptFilingHistoryResponse> getReportedHistory(String ticker, Set<Concept> concepts, FiscalYearCountType fiscalYearCount);
 }

@@ -2,15 +2,15 @@ package ch.alni.mcp.edgar.tools;
 
 
 import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.core.Taxonomy;
 import ch.alni.mcp.edgar.core.TaxonomyMetadata;
-import ch.alni.mcp.edgar.service.ConceptFilingHistory;
+import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
 import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
@@ -76,10 +76,11 @@ public class EdgarMcpServer {
                     readOnlyHint = true,
                     openWorldHint = false
             ))
-    public Flux<ConceptFilingHistory> getConceptFilingHistory(
+    public Mono<ConceptFilingHistoryResponse> getConceptFilingHistory(
             @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
-            @McpToolParam(description = "The set of concepts to retrieve the history of filings") Set<Concept> concepts) {
-        return edgarService.getReportedHistory(ticker, concepts);
+            @McpToolParam(description = "The set of concepts to retrieve the history of filings") Set<Concept> concepts,
+            @McpToolParam(description = "How many fiscal years to include in the history") FiscalYearCountType fiscalYearCount) {
+        return edgarService.getReportedHistory(ticker, concepts, fiscalYearCount);
     }
 
 }

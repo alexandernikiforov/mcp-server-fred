@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Filing;
@@ -23,10 +24,20 @@ import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Observation;
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.PeriodValue;
 
 final class Converter {
+    public static final int MAX_LATEST_FILINGS = 12;
+    private static final Set<String> SUPPORTED_FORMS = Set.of(
+            "20-F",
+            "20-F/A",
+            "10-K",
+            "10-K/A",
+            "10-Q",
+            "10-Q/A"
+    );
+
     private Converter() {
     }
 
-    static Optional<ConceptFilingHistory> toReportedHistory(CompanyFactsResponse factsResponse, Concept concept) {
+    static Optional<ConceptFilingHistory> toReportedHistory(CompanyFactsResponse factsResponse, Concept concept, int fiscalYearCount) {
         final CompanyFactsResponse.FactDefinition factDefinition = factsResponse.facts()
                 .getOrDefault(concept.taxonomy(), Collections.emptyMap())
                 .get(concept.tag());
@@ -39,11 +50,11 @@ final class Converter {
                 concept.taxonomy(),
                 concept.tag(),
                 factDefinition.description(),
-                toFilings(factDefinition)
+                toFilings(factDefinition, fiscalYearCount)
         ));
     }
 
-    static List<Filing> toFilings(CompanyFactsResponse.FactDefinition factDefinition) {
+    static List<Filing> toFilings(CompanyFactsResponse.FactDefinition factDefinition, int fiscalYearCount) {
         // list of observations grouped by fact key under the same unit
         final List<Map<FactKey, List<Observation>>> observations =
                 factDefinition.units().entrySet().stream()
@@ -52,6 +63,7 @@ final class Converter {
                                 entry.getKey(),
                                 // facts grouped by the fact key (accn, fy, fp, form, filed)
                                 entry.getValue().stream()
+                                        .filter(fact -> SUPPORTED_FORMS.contains(fact.form()))
                                         .collect(Collectors.groupingBy(fact -> new FactKey(
                                                 fact.accn(),
                                                 fact.fy(),
@@ -81,7 +93,16 @@ final class Converter {
                         }
                 ));
 
+        final int latestFy = mergedObservations.keySet().stream()
+                .mapToInt(FactKey::fy)
+                .max()
+                .orElse(0);
+
         return mergedObservations.entrySet().stream()
+                .filter(entry -> entry.getKey().fy() > latestFy - fiscalYearCount)
+                .sorted(Comparator.comparing(
+                        (Map.Entry<FactKey, List<Observation>> entry) -> entry.getKey().filed()
+                ).reversed())
                 .map(entry -> toFiling(entry.getKey(), entry.getValue()))
                 .toList();
     }

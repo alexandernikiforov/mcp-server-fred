@@ -1,15 +1,42 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.port.CompanyFactsResponse;
+import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
+import org.springframework.core.io.Resource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import tools.jackson.databind.json.JsonMapper;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * TODO: javadoc
- */
+@SpringJUnitConfig
+@AutoConfigureJson
 class ConverterTest {
+
+    @Autowired
+    private JsonMapper jsonMapper;
+
+    @Value("classpath:responses/aapl-facts.json")
+    private Resource facts;
+
+    @Test
+    void testFacts() throws IOException {
+        final CompanyFactsResponse response = jsonMapper.readValue(facts.getInputStream(), CompanyFactsResponse.class);
+
+        final Optional<ConceptFilingHistory> reportedHistory = Converter
+                .toReportedHistory(response, Concept.of("us-gaap:NetIncomeLoss"), 3);
+
+        assertThat(reportedHistory).isPresent();
+
+    }
 
     @Test
     void testClassifyPeriod() {

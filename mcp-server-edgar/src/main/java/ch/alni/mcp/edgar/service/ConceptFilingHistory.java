@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 
@@ -25,6 +26,11 @@ public record ConceptFilingHistory(String taxonomy, String tag, String descripti
     public record Observation(String unit, PeriodValue reported, List<PeriodValue> comparatives) {
     }
 
-    public record PeriodValue(@Nullable LocalDate start, LocalDate end, BigDecimal value) {
+    public record PeriodValue(
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @Nullable LocalDate start,
+            LocalDate end,
+            BigDecimal value
+    ) {
     }
 }
