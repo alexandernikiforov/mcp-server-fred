@@ -213,7 +213,10 @@ final class Converter {
     }
 
     static Tuple2<String, String> toPresentation(DirectoryResponse directoryResponse) {
-        return Tuples.of(toCompanyXsd(directoryResponse), toPrexXml(directoryResponse));
+        final String companyXsd = toCompanyXsd(directoryResponse);
+        final String preXml = toPrexXml(directoryResponse);
+        // if no _pre.xml found, return companyXsd
+        return Tuples.of(companyXsd, preXml == null ? companyXsd : preXml);
     }
 
     static String toPrexXml(DirectoryResponse directoryResponse) {
@@ -221,7 +224,7 @@ final class Converter {
                 .map(DirectoryResponse.Item::name)
                 .filter(name -> name.toLowerCase(Locale.ROOT).contains("_pre.xml"))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No _pre.xml found"));
+                .orElse(null);
     }
 
     static String toCompanyXsd(DirectoryResponse directoryResponse) {

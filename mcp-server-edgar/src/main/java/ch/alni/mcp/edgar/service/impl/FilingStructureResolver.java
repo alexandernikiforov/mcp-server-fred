@@ -30,6 +30,7 @@ class FilingStructureResolver {
                         entry.getValue(),
                         toConceptNodes(arcsByRole.getOrDefault(entry.getKey(), List.of()))
                 ))
+                .filter(section -> !section.nodes().isEmpty())
                 .toList();
 
         return new FilingStructure(sections);
@@ -66,6 +67,8 @@ class FilingStructureResolver {
                 .toList();
 
         path.remove(concept);
-        return new FilingStructure.ConceptNode(concept, children);
+        final String normalized = concept.substring(concept.indexOf('#') + 1)
+                .replaceFirst("_", ":");
+        return new FilingStructure.ConceptNode(normalized, children);
     }
 }
