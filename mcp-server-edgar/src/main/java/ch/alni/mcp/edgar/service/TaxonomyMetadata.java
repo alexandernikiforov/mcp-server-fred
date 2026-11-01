@@ -1,5 +1,7 @@
-package ch.alni.mcp.edgar.core;
+package ch.alni.mcp.edgar.service;
 
+import ch.alni.mcp.edgar.core.BalanceType;
+import ch.alni.mcp.edgar.core.PeriodType;
 import lombok.Builder;
 
 /**

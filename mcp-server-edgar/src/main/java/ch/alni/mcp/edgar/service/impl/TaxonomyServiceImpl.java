@@ -1,7 +1,7 @@
 package ch.alni.mcp.edgar.service.impl;
 
 import ch.alni.mcp.edgar.core.Taxonomy;
-import ch.alni.mcp.edgar.core.TaxonomyMetadata;
+import ch.alni.mcp.edgar.service.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.stereotype.Service;
 

@@ -28,6 +28,8 @@ class EdgarArchiveHttpClient implements EdgarArchiveClient {
     }
 
     @Override
+    @RateLimiter(name = "edgar")
+    @Cacheable(cacheNames = "directory", sync = true)
     public Mono<DirectoryResponse> getDirectory(long cik, String accession) {
         return archiveWebClient.get()
                 .uri(EdgarArchivePaths.ACCESSION_DOCUMENT_PATH, cik, accession, "index.json")

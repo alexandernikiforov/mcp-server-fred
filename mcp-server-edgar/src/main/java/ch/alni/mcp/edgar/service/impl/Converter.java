@@ -5,10 +5,13 @@ import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
+import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import ch.alni.mcp.edgar.service.SubmissionHistory.Submission;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -206,6 +210,26 @@ final class Converter {
                         filings.primaryDocument().get(i)
                 ))
                 .toList();
+    }
+
+    static Tuple2<String, String> toPresentation(DirectoryResponse directoryResponse) {
+        return Tuples.of(toCompanyXsd(directoryResponse), toPrexXml(directoryResponse));
+    }
+
+    static String toPrexXml(DirectoryResponse directoryResponse) {
+        return directoryResponse.directory().items().stream()
+                .map(DirectoryResponse.Item::name)
+                .filter(name -> name.toLowerCase(Locale.ROOT).contains("_pre.xml"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No _pre.xml found"));
+    }
+
+    static String toCompanyXsd(DirectoryResponse directoryResponse) {
+        return directoryResponse.directory().items().stream()
+                .map(DirectoryResponse.Item::name)
+                .filter(name -> name.toLowerCase(Locale.ROOT).contains(".xsd"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No company XSD found"));
     }
 
     enum ReportingPeriod {

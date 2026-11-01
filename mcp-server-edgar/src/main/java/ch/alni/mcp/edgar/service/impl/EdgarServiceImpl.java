@@ -2,9 +2,11 @@ package ch.alni.mcp.edgar.service.impl;
 
 import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
+import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.FilingStructure;
 import ch.alni.mcp.edgar.service.SubmissionHistory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,11 +18,18 @@ import java.util.Set;
 class EdgarServiceImpl implements EdgarService {
 
     private final EdgarDataClient dataClient;
+    private final EdgarArchiveClient archiveClient;
     private final TickerResolver tickerResolver;
+    private final FilingStructureResolver filingStructureResolver;
 
-    EdgarServiceImpl(EdgarDataClient dataClient, TickerResolver tickerResolver) {
+    EdgarServiceImpl(EdgarDataClient dataClient,
+                     EdgarArchiveClient archiveClient,
+                     TickerResolver tickerResolver,
+                     FilingStructureResolver filingStructureResolver) {
         this.dataClient = dataClient;
+        this.archiveClient = archiveClient;
         this.tickerResolver = tickerResolver;
+        this.filingStructureResolver = filingStructureResolver;
     }
 
     @Override
@@ -57,4 +66,19 @@ class EdgarServiceImpl implements EdgarService {
                 );
     }
 
+    @Override
+    public Mono<FilingStructure> getFilingStructure(String ticker, String accessionNumber) {
+        final Long cik = tickerResolver.resolve(ticker);
+        if (cik == null) {
+            return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));
+        }
+
+        final String accn = accessionNumber.replace("-", "");
+        return archiveClient.getDirectory(cik, accn)
+                .map(Converter::toPresentation)
+                .flatMap(tuple -> archiveClient.getAccession(cik, accn, tuple.getT1())
+                        .zipWhen(_ -> archiveClient.getAccession(cik, accn, tuple.getT2()))
+                )
+                .map(tuple -> filingStructureResolver.resolve(tuple.getT1(), tuple.getT2()));
+    }
 }

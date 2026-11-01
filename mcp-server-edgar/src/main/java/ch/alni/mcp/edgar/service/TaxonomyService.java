@@ -1,7 +1,6 @@
 package ch.alni.mcp.edgar.service;
 
 import ch.alni.mcp.edgar.core.Taxonomy;
-import ch.alni.mcp.edgar.core.TaxonomyMetadata;
 
 import java.util.Optional;
 

@@ -26,9 +26,6 @@ import java.util.Map;
  */
 public class XBRLConceptParser {
 
-    public static final String XBRL_INSTANCE_NS = "http://www.xbrl.org/2003/instance";
-    private static final String XBRL_LINK_NS = "http://www.xbrl.org/2003/linkbase";
-    private static final String XLINK_NS = "http://www.w3.org/1999/xlink";
     private final DocumentBuilderFactory documentBuilderFactory;
 
     public XBRLConceptParser(DocumentBuilderFactory documentBuilderFactory) {
@@ -39,8 +36,8 @@ public class XBRLConceptParser {
         final Map<String, String> result = new HashMap<>();
         for (int i = 0; i < locators.getLength(); i++) {
             final Element locator = (Element) locators.item(i);
-            final String href = locator.getAttributeNS(XLINK_NS, "href");
-            final String label = locator.getAttributeNS(XLINK_NS, "label");
+            final String href = locator.getAttributeNS(XBRLNamespaces.XLINK_NS, "href");
+            final String label = locator.getAttributeNS(XBRLNamespaces.XLINK_NS, "label");
             result.put(label, href);
         }
         return Collections.unmodifiableMap(result);
@@ -50,7 +47,7 @@ public class XBRLConceptParser {
         final Map<String, String> result = new HashMap<>();
         for (int i = 0; i < resources.getLength(); i++) {
             final Element resource = (Element) resources.item(i);
-            final String label = resource.getAttributeNS(XLINK_NS, "label");
+            final String label = resource.getAttributeNS(XBRLNamespaces.XLINK_NS, "label");
             final String text = resource.getTextContent();
             result.put(label, text);
         }
@@ -74,18 +71,18 @@ public class XBRLConceptParser {
             final DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             final Document document = builder.parse(nonClosingInput);
             final Map<String, String> locators = readLocators(
-                    document.getElementsByTagNameNS(XBRL_LINK_NS, "loc")
+                    document.getElementsByTagNameNS(XBRLNamespaces.XBRL_LINK_NS, "loc")
             );
 
             final Map<String, String> resources = readResources(
-                    document.getElementsByTagNameNS(XBRL_LINK_NS, "label")
+                    document.getElementsByTagNameNS(XBRLNamespaces.XBRL_LINK_NS, "label")
             );
 
-            final NodeList arcs = document.getElementsByTagNameNS(XBRL_LINK_NS, "labelArc");
+            final NodeList arcs = document.getElementsByTagNameNS(XBRLNamespaces.XBRL_LINK_NS, "labelArc");
             for (int i = 0; i < arcs.getLength(); i++) {
                 final Element arc = (Element) arcs.item(i);
-                final String fromLocator = arc.getAttributeNS(XLINK_NS, "from");
-                final String toLabel = arc.getAttributeNS(XLINK_NS, "to");
+                final String fromLocator = arc.getAttributeNS(XBRLNamespaces.XLINK_NS, "from");
+                final String toLabel = arc.getAttributeNS(XBRLNamespaces.XLINK_NS, "to");
 
                 final String href = locators.get(fromLocator);
                 final String label = resources.get(toLabel);
@@ -131,8 +128,8 @@ public class XBRLConceptParser {
 
                 final String name = e.getAttribute("name");
                 final String type = e.getAttribute("type");
-                final String periodType = e.getAttributeNS(XBRL_INSTANCE_NS, "periodType");
-                final String balance = e.getAttributeNS(XBRL_INSTANCE_NS, "balance");
+                final String periodType = e.getAttributeNS(XBRLNamespaces.XBRL_INSTANCE_NS, "periodType");
+                final String balance = e.getAttributeNS(XBRLNamespaces.XBRL_INSTANCE_NS, "balance");
                 concepts.put(name, TaxonomyConcept.builder()
                         .id(id)
                         .name(name)

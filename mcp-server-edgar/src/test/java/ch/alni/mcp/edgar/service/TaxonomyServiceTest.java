@@ -3,7 +3,6 @@ package ch.alni.mcp.edgar.service;
 import ch.alni.mcp.edgar.core.BalanceType;
 import ch.alni.mcp.edgar.core.PeriodType;
 import ch.alni.mcp.edgar.core.Taxonomy;
-import ch.alni.mcp.edgar.core.TaxonomyMetadata;
 import ch.alni.mcp.edgar.port.CompanyConceptResponse;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import org.junit.jupiter.api.Test;

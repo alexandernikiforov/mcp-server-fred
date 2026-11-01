@@ -34,4 +34,6 @@ public interface EdgarService {
      * @return A {@link Mono} emitting the {@link SubmissionHistory} containing the requested submission details.
      */
     Mono<SubmissionHistory> getSubmissionHistory(String ticker, int latestSubmissions);
+
+    Mono<FilingStructure> getFilingStructure(String ticker, String accessionNumber);
 }

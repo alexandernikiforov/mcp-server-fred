@@ -4,10 +4,11 @@ package ch.alni.mcp.edgar.tools;
 import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.core.Taxonomy;
-import ch.alni.mcp.edgar.core.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.FilingStructure;
 import ch.alni.mcp.edgar.service.SubmissionHistory;
+import ch.alni.mcp.edgar.service.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -99,4 +100,18 @@ public class EdgarMcpServer {
         return edgarService.getSubmissionHistory(ticker, latestSubmissions);
     }
 
+    @McpTool(name = "get_filing_structure",
+            generateOutputSchema = true,
+            description = "Returns the concept structure of the filing with the given accession number",
+            annotations = @McpTool.McpAnnotations(
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    readOnlyHint = true,
+                    openWorldHint = false
+            ))
+    public Mono<FilingStructure> getFilingStructure(
+            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
+            @McpToolParam(description = "Accession number") String accessionNumber) {
+        return edgarService.getFilingStructure(ticker, accessionNumber);
+    }
 }
