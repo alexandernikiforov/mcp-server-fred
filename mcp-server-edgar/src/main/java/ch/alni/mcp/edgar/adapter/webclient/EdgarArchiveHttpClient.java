@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.adapter.webclient;
 
+import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,8 +22,16 @@ class EdgarArchiveHttpClient implements EdgarArchiveClient {
     @Cacheable(cacheNames = "accession", sync = true)
     public Mono<String> getAccession(long cik, String accession, String primaryDocument) {
         return archiveWebClient.get()
-                .uri(EdgarArchivePaths.ACCESSION_PATH, cik, accession, primaryDocument)
+                .uri(EdgarArchivePaths.ACCESSION_DOCUMENT_PATH, cik, accession, primaryDocument)
                 .retrieve()
                 .bodyToMono(String.class);
+    }
+
+    @Override
+    public Mono<DirectoryResponse> getDirectory(long cik, String accession) {
+        return archiveWebClient.get()
+                .uri(EdgarArchivePaths.ACCESSION_DOCUMENT_PATH, cik, accession, "index.json")
+                .retrieve()
+                .bodyToMono(DirectoryResponse.class);
     }
 }
