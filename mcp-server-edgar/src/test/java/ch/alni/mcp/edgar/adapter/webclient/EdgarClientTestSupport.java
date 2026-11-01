@@ -2,8 +2,6 @@ package ch.alni.mcp.edgar.adapter.webclient;
 
 import io.github.resilience4j.springboot.ratelimiter.autoconfigure.RateLimiterAutoConfiguration;
 import mockwebserver3.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.webclient.test.autoconfigure.WebClientTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -19,16 +17,21 @@ import java.io.IOException;
 @TestPropertySource("classpath:/edgar-client-test.properties")
 abstract class EdgarClientTestSupport {
 
-    static final MockWebServer server = new MockWebServer();
+    static MockWebServer server = startServer();
 
-    @BeforeAll
-    static void setUpMockServer() throws IOException {
-        server.start();
-    }
+    private static MockWebServer startServer() {
+        final MockWebServer mockServer = new MockWebServer();
+        try {
+            mockServer.start();
+        }
+        catch (IOException e) {
+            throw new ExceptionInInitializerError(e);
+        }
 
-    @AfterAll
-    static void tearDownMockServer() {
-        server.close();
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(mockServer::close, "edgar-mock-server-shutdown")
+        );
+        return mockServer;
     }
 
     @DynamicPropertySource

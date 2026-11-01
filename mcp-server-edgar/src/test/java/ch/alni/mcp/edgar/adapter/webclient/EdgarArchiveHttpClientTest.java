@@ -26,7 +26,6 @@ class EdgarArchiveHttpClientTest extends EdgarClientTestSupport {
     @Autowired
     private EdgarArchiveClient client;
 
-
     @Test
     void testDirectoryResponse() throws Exception {
         server.enqueue(new MockResponse.Builder()

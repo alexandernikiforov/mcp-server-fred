@@ -145,7 +145,7 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
     }
 
     @Test
-    void getSubmissionsIfForbidden() {
+    void getSubmissionsIfForbidden() throws Exception {
         server.enqueue(new MockResponse.Builder()
                 .code(403)
                 .body("<html><body>SEC.gov | Your Request Originates from an Undeclared Automated Tool</body></html>")
@@ -158,6 +158,12 @@ class EdgarDataClientTest extends EdgarClientTestSupport {
         StepVerifier.create(responseMono)
                 .expectError(WebClientResponseException.Forbidden.class)
                 .verify();
+
+        final RecordedRequest recordedRequest = server.takeRequest(10, TimeUnit.SECONDS);
+        assertThat(recordedRequest).isNotNull();
+        assertThat(recordedRequest.getMethod()).isEqualTo("GET");
+        assertThat(recordedRequest.getUrl().encodedPath()).isEqualTo(
+                EdgarDataPaths.SUBMISSIONS_PATH.replace("{cik}", CikFormatter.formatCik(320193)));
     }
 
 }

@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.service;
 
+import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -11,4 +12,8 @@ public class EdgarServiceTestSupport {
 
     @MockitoBean
     EdgarDataClient edgarDataClient;
+
+    @MockitoBean
+    EdgarArchiveClient edgarArchiveClient;
+
 }
