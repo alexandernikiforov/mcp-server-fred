@@ -5,14 +5,12 @@ import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
-import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
-import ch.alni.mcp.edgar.service.EdgarService;
-import ch.alni.mcp.edgar.service.FilingStructure;
-import ch.alni.mcp.edgar.service.SubmissionHistory;
+import ch.alni.mcp.edgar.service.*;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -24,15 +22,18 @@ class EdgarServiceImpl implements EdgarService {
     private final EdgarArchiveClient archiveClient;
     private final TickerResolver tickerResolver;
     private final FilingStructureResolver filingStructureResolver;
+    private final FilingFactResolver filingFactResolver;
 
     EdgarServiceImpl(EdgarDataClient dataClient,
                      EdgarArchiveClient archiveClient,
                      TickerResolver tickerResolver,
-                     FilingStructureResolver filingStructureResolver) {
+                     FilingStructureResolver filingStructureResolver,
+                     FilingFactResolver filingFactResolver) {
         this.dataClient = dataClient;
         this.archiveClient = archiveClient;
         this.tickerResolver = tickerResolver;
         this.filingStructureResolver = filingStructureResolver;
+        this.filingFactResolver = filingFactResolver;
     }
 
     @Override
@@ -93,5 +94,24 @@ class EdgarServiceImpl implements EdgarService {
                                         : Mono.just(companyXsd),
                                 filingStructureResolver::resolve
                         ));
+    }
+
+    @Override
+    public Mono<FilingFactResponse> getFilingFacts(String ticker, String accessionNumber, Set<String> concepts) {
+        final Long cik = tickerResolver.resolve(ticker);
+        if (cik == null) {
+            return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));
+        }
+
+        final Predicate<DirectoryResponse.Item> instancePredicate = item ->
+                item.name().toLowerCase(Locale.ROOT).contains("_htm.xml");
+
+        final String accn = accessionNumber.replace("-", "");
+        return archiveClient.getDirectory(cik, accn)
+                .map(DirectoryResponse::directory)
+                .filter(directory -> directory.containsItem(instancePredicate))
+                .flatMap(directory -> archiveClient.getAccession(cik, accn, directory.getItemName(instancePredicate)))
+                .map(filingFactResolver::parseFiling)
+                .map(instance -> new FilingFactResponse(List.of()));
     }
 }
