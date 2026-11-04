@@ -2,6 +2,7 @@ package ch.alni.mcp.edgar.service.impl;
 
 import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
+import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Locale;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @Service
 class EdgarServiceImpl implements EdgarService {
@@ -74,11 +77,21 @@ class EdgarServiceImpl implements EdgarService {
         }
 
         final String accn = accessionNumber.replace("-", "");
+
+        final Predicate<DirectoryResponse.Item> companyXsdPredicate = item ->
+                item.name().toLowerCase(Locale.ROOT).contains(".xsd");
+
+        final Predicate<DirectoryResponse.Item> preXmlPredicate = item ->
+                item.name().toLowerCase(Locale.ROOT).contains("_pre.xml");
+
         return archiveClient.getDirectory(cik, accn)
-                .map(Converter::toPresentation)
-                .flatMap(tuple -> archiveClient.getAccession(cik, accn, tuple.getT1())
-                        .zipWhen(_ -> archiveClient.getAccession(cik, accn, tuple.getT2()))
-                )
-                .map(tuple -> filingStructureResolver.resolve(tuple.getT1(), tuple.getT2()));
+                .map(DirectoryResponse::directory)
+                .filter(directory -> directory.containsItem(companyXsdPredicate))
+                .flatMap(directory -> archiveClient.getAccession(cik, accn, directory.getItemName(companyXsdPredicate))
+                        .zipWhen(companyXsd -> directory.containsItem(preXmlPredicate)
+                                        ? archiveClient.getAccession(cik, accn, directory.getItemName(preXmlPredicate))
+                                        : Mono.just(companyXsd),
+                                filingStructureResolver::resolve
+                        ));
     }
 }

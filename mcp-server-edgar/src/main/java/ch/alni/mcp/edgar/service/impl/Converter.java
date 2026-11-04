@@ -5,30 +5,18 @@ import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
-import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import ch.alni.mcp.edgar.service.SubmissionHistory.Submission;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Filing;
-import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Observation;
-import static ch.alni.mcp.edgar.service.ConceptFilingHistory.PeriodValue;
+import static ch.alni.mcp.edgar.service.ConceptFilingHistory.*;
 
 final class Converter {
     private static final Set<String> SUPPORTED_FORMS = Set.of(
@@ -210,29 +198,6 @@ final class Converter {
                         filings.primaryDocument().get(i)
                 ))
                 .toList();
-    }
-
-    static Tuple2<String, String> toPresentation(DirectoryResponse directoryResponse) {
-        final String companyXsd = toCompanyXsd(directoryResponse);
-        final String preXml = toPrexXml(directoryResponse);
-        // if no _pre.xml found, return companyXsd
-        return Tuples.of(companyXsd, preXml == null ? companyXsd : preXml);
-    }
-
-    static String toPrexXml(DirectoryResponse directoryResponse) {
-        return directoryResponse.directory().items().stream()
-                .map(DirectoryResponse.Item::name)
-                .filter(name -> name.toLowerCase(Locale.ROOT).contains("_pre.xml"))
-                .findFirst()
-                .orElse(null);
-    }
-
-    static String toCompanyXsd(DirectoryResponse directoryResponse) {
-        return directoryResponse.directory().items().stream()
-                .map(DirectoryResponse.Item::name)
-                .filter(name -> name.toLowerCase(Locale.ROOT).contains(".xsd"))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No company XSD found"));
     }
 
     enum ReportingPeriod {
