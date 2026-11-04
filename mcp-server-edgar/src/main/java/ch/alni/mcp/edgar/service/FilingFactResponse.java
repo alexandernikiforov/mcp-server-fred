@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public record FilingFactResponse(List<FilingFact> facts) {
 
@@ -17,7 +18,12 @@ public record FilingFactResponse(List<FilingFact> facts) {
     }
 
     @Builder
-    public record Observation(String unitRef, PeriodValue reported, List<PeriodValue> comparatives) {
+    public record Observation(
+            String unitRef,
+            Map<String, String> dimensions,
+            PeriodValue reported,
+            List<PeriodValue> comparatives
+    ) {
     }
 
     public record PeriodValue(

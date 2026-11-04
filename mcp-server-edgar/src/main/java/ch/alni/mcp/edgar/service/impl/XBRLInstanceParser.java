@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,7 @@ public class XBRLInstanceParser {
 
             contexts.put(id, context);
         }
-        return contexts;
+        return Collections.unmodifiableMap(contexts);
     }
 
     private Map<String, String> getDimensions(Element context) {
@@ -158,7 +159,7 @@ public class XBRLInstanceParser {
 
             dimensions.put(dimension, memberName);
         }
-        return dimensions;
+        return Collections.unmodifiableMap(dimensions);
     }
 
     /**
