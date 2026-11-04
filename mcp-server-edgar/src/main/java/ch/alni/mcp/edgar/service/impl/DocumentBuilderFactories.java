@@ -23,6 +23,13 @@ final class DocumentBuilderFactories {
             factory.setXIncludeAware(false);
             factory.setExpandEntityReferences(false);
             factory.setNamespaceAware(true);
+
+            factory.setAttribute("jdk.xml.maxGeneralEntitySizeLimit", "10000000");
+            factory.setAttribute("jdk.xml.totalEntitySizeLimit", "25000000");
+
+            // Keep external resource access disabled.
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         }
         catch (ParserConfigurationException e) {
             throw new IllegalStateException("Cannot initialize DocumentBuilderFactory", e);
