@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,14 +28,17 @@ class FilingFactResolverTest {
     @Test
     void testResolve() throws IOException {
         final String contentAsString = instanceXml.getContentAsString(StandardCharsets.UTF_8);
-        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString);
+        final String concept = "baba:PaymentsToAcquireLandUseRightsPropertyAndEquipment";
+
+        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(concept));
 
         assertThat(factResponse).isNotNull();
         final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
                 .stream()
-                .filter(filingFact -> filingFact.concept().equals("baba:PaymentsToAcquireLandUseRightsPropertyAndEquipment"))
                 .toList();
 
-        assertThat(filingFacts).isNotEmpty();
+        assertThat(filingFacts).hasSize(1);
+        assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);
+        assertThat(filingFacts.getFirst().observations()).hasSize(2);
     }
 }

@@ -110,6 +110,6 @@ class EdgarServiceImpl implements EdgarService {
                 .map(DirectoryResponse::directory)
                 .filter(directory -> directory.containsItem(instancePredicate))
                 .flatMap(directory -> archiveClient.getAccession(cik, accn, directory.getItemName(instancePredicate)))
-                .map(filingFactResolver::parseFiling);
+                .map(instance -> filingFactResolver.parseFiling(instance, concepts));
     }
 }

@@ -6,6 +6,7 @@ import org.xml.sax.InputSource;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Set;
 
 @Component
 class FilingFactResolver {
@@ -14,9 +15,11 @@ class FilingFactResolver {
             DocumentBuilderFactories.documentBuilderFactory
     );
 
-    FilingFactResponse parseFiling(String filingInstance) {
-        final XBRLInstanceParser.XBRLInstance xbrlInstance = instanceParser.parseInstance(new InputSource(new StringReader(filingInstance)));
-        final List<FilingFactResponse.FilingFact> filingFacts = FilingFactConverter.toFilingFacts(xbrlInstance);
+    FilingFactResponse parseFiling(String filingInstance, Set<String> concepts) {
+        final XBRLInstanceParser.XBRLInstance xbrlInstance = instanceParser.parseInstance(
+                new InputSource(new StringReader(filingInstance))
+        );
+        final List<FilingFactResponse.FilingFact> filingFacts = FilingFactConverter.toFilingFacts(xbrlInstance, concepts);
         return new FilingFactResponse(filingFacts);
     }
 }

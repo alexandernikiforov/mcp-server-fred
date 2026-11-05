@@ -5,10 +5,7 @@ import ch.alni.mcp.edgar.service.impl.XBRLInstanceParser.XBRLInstance;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ch.alni.mcp.edgar.service.impl.Converter.isSamePeriod;
@@ -23,8 +20,9 @@ final class FilingFactConverter {
     private FilingFactConverter() {
     }
 
-    static List<FilingFactResponse.FilingFact> toFilingFacts(XBRLInstance instance) {
+    static List<FilingFactResponse.FilingFact> toFilingFacts(XBRLInstance instance, Set<String> concepts) {
         final Map<FactKey, List<FactWithPeriod>> groupedFacts = instance.facts().stream()
+                .filter(fact -> concepts.contains(fact.concept()))
                 .collect(Collectors.groupingBy(fact -> {
                             final var context = instance.contexts().get(fact.contextRef());
                             return new FactKey(
