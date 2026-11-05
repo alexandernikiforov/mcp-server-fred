@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,14 +45,7 @@ final class FilingFactConverter {
                         }, Collectors.toList())));
 
         // find the maximum end value
-        final LocalDate maxEnd = instance.facts().stream()
-                .filter(fact -> fact.concept().equals("dei:DocumentPeriodEndDate"))
-                .map(fact -> {
-                    final var context = instance.contexts().get(fact.contextRef());
-                    return Objects.requireNonNull(context.endDate());
-                })
-                .findFirst()
-                .orElse(null);
+        final LocalDate maxEnd = instance.documentPeriodEndDate();
 
         return groupedFacts.entrySet().stream()
                 .collect(Collectors.groupingBy(

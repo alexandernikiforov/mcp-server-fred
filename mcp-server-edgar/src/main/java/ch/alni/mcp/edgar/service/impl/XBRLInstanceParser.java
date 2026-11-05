@@ -15,7 +15,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XBRLInstanceParser {
 
@@ -32,7 +36,8 @@ public class XBRLInstanceParser {
 
         try {
             return new BigDecimal(value.strip());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return null;
         }
     }
@@ -62,9 +67,21 @@ public class XBRLInstanceParser {
         final String namespaceUri = element.lookupNamespaceURI(prefix.isEmpty() ? null : prefix);
         if (namespaceUri == null) {
             return new QName(XMLConstants.NULL_NS_URI, localName);
-        } else {
+        }
+        else {
             return new QName(namespaceUri, localName, prefix);
         }
+    }
+
+    private LocalDate getDocumentPeriodEndDate(Document document) {
+        final String namespaceUri = document.lookupNamespaceURI("dei");
+        final NodeList elements = document.getElementsByTagNameNS(namespaceUri, "DocumentPeriodEndDate");
+        if (elements.getLength() == 0) {
+            return null;
+        }
+        final Element element = (Element) elements.item(0);
+        final String value = element.getTextContent();
+        return LocalDate.parse(value);
     }
 
     private List<XBRLInstance.Fact> getFacts(Document document) {
@@ -159,8 +176,10 @@ public class XBRLInstanceParser {
             final List<XBRLInstance.Fact> facts = getFacts(document);
             final Map<String, XBRLInstance.Context> contexts = getContextMap(document);
             final Map<String, XBRLInstance.Unit> units = getUnitMap(document);
-            return new XBRLInstance(contexts, units, facts);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
+            final LocalDate documentPeriodEndDate = getDocumentPeriodEndDate(document);
+            return new XBRLInstance(documentPeriodEndDate, contexts, units, facts);
+        }
+        catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException("Cannot parse company XSD stream", e);
         }
     }
@@ -196,7 +215,8 @@ public class XBRLInstanceParser {
             if (divide == null) {
                 units.put(id, new XBRLInstance.Unit(id, getMeasures(element), List.of()));
 
-            } else {
+            }
+            else {
                 final NodeList numerators = divide
                         .getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "unitNumerator");
 
@@ -233,11 +253,12 @@ public class XBRLInstanceParser {
     /**
      * XBRLInstance as a parsed structure.
      *
-     * @param contexts contexts mapped by their IDs
-     * @param facts    facts
+     * @param documentPeriodEndDate
+     * @param contexts              contexts mapped by their IDs
+     * @param facts                 facts
      */
     public record XBRLInstance(
-            Map<String, Context> contexts,
+            LocalDate documentPeriodEndDate, Map<String, Context> contexts,
             Map<String, Unit> units,
             List<Fact> facts
     ) {

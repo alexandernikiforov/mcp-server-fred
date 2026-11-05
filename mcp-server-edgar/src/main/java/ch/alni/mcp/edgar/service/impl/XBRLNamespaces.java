@@ -6,6 +6,7 @@ public final class XBRLNamespaces {
     public static final String XBRL_LINK_NS = "http://www.xbrl.org/2003/linkbase";
     public static final String XLINK_NS = "http://www.w3.org/1999/xlink";
     public static final String XBRL_DIMENSIONS_NS = "http://xbrl.org/2006/xbrldi";
+    public static final String XBRL_DEI_NS = "http://xbrl.sec.gov/dei/2026";
 
     private XBRLNamespaces() {
     }
