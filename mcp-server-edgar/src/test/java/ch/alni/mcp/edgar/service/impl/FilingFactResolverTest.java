@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ class FilingFactResolverTest {
         final String contentAsString = instanceXml.getContentAsString(StandardCharsets.UTF_8);
         final String concept = "baba:PaymentsToAcquireLandUseRightsPropertyAndEquipment";
 
-        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(concept));
+        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
 
         assertThat(factResponse).isNotNull();
         final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public record FilingFactResponse(List<FilingFact> facts) {
 
@@ -21,8 +22,8 @@ public record FilingFactResponse(List<FilingFact> facts) {
     public record Observation(
             String unit,
             Map<String, String> dimensions,
-            PeriodValue reported,
-            List<PeriodValue> comparatives
+            @Nullable PeriodValue reported,
+            Set<PeriodValue> comparatives
     ) {
     }
 

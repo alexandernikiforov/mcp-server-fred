@@ -5,7 +5,11 @@ import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
-import ch.alni.mcp.edgar.service.*;
+import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
+import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.FilingFactResponse;
+import ch.alni.mcp.edgar.service.FilingStructure;
+import ch.alni.mcp.edgar.service.SubmissionHistory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -96,7 +100,7 @@ class EdgarServiceImpl implements EdgarService {
     }
 
     @Override
-    public Mono<FilingFactResponse> getFilingFacts(String ticker, String accessionNumber, Set<String> concepts) {
+    public Mono<FilingFactResponse> getFilingFacts(String ticker, String accessionNumber, Set<Concept> concepts) {
         final Long cik = tickerResolver.resolve(ticker);
         if (cik == null) {
             return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));

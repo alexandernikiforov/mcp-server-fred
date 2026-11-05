@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
@@ -15,7 +16,7 @@ class FilingFactResolver {
             DocumentBuilderFactories.documentBuilderFactory
     );
 
-    FilingFactResponse parseFiling(String filingInstance, Set<String> concepts) {
+    FilingFactResponse parseFiling(String filingInstance, Set<Concept> concepts) {
         final XBRLInstanceParser.XBRLInstance xbrlInstance = instanceParser.parseInstance(
                 new InputSource(new StringReader(filingInstance))
         );

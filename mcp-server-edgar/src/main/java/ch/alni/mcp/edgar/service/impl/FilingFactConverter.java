@@ -1,11 +1,16 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
 import ch.alni.mcp.edgar.service.impl.XBRLInstanceParser.XBRLInstance;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ch.alni.mcp.edgar.service.impl.Converter.isSamePeriod;
@@ -20,9 +25,9 @@ final class FilingFactConverter {
     private FilingFactConverter() {
     }
 
-    static List<FilingFactResponse.FilingFact> toFilingFacts(XBRLInstance instance, Set<String> concepts) {
+    static List<FilingFactResponse.FilingFact> toFilingFacts(XBRLInstance instance, Set<Concept> concepts) {
         final Map<FactKey, List<FactWithPeriod>> groupedFacts = instance.facts().stream()
-                .filter(fact -> concepts.contains(fact.concept()))
+                .filter(fact -> concepts.contains(Concept.of(fact.concept())))
                 .collect(Collectors.groupingBy(fact -> {
                             final var context = instance.contexts().get(fact.contextRef());
                             return new FactKey(
@@ -40,11 +45,21 @@ final class FilingFactConverter {
                             );
                         }, Collectors.toList())));
 
+        // find the maximum end value
+        final LocalDate maxEnd = instance.facts().stream()
+                .filter(fact -> fact.concept().equals("dei:DocumentPeriodEndDate"))
+                .map(fact -> {
+                    final var context = instance.contexts().get(fact.contextRef());
+                    return Objects.requireNonNull(context.endDate());
+                })
+                .findFirst()
+                .orElse(null);
+
         return groupedFacts.entrySet().stream()
                 .collect(Collectors.groupingBy(
                         entry -> entry.getKey().concept(),
                         Collectors.flatMapping(
-                                entry -> toObservations(entry.getKey(), entry.getValue()).stream(),
+                                entry -> toObservations(entry.getKey(), entry.getValue(), maxEnd).stream(),
                                 Collectors.toList())))
                 .entrySet().stream()
                 .map(entry -> new FilingFactResponse.FilingFact(
@@ -53,23 +68,18 @@ final class FilingFactConverter {
                 .toList();
     }
 
-    static List<FilingFactResponse.Observation> toObservations(FactKey factKey, List<FactWithPeriod> facts) {
+    static List<FilingFactResponse.Observation> toObservations(FactKey factKey, List<FactWithPeriod> facts, LocalDate maxEnd) {
         if (facts.isEmpty()) {
             return List.of();
         }
 
-        // find the maximum end value
-        final Optional<LocalDate> maxEnd = facts.stream()
-                .map(FactWithPeriod::end)
-                .max(Comparator.naturalOrder());
-
-        final List<FactWithPeriod> latestFacts = maxEnd
+        final List<FactWithPeriod> latestFacts = Optional.ofNullable(maxEnd)
                 .map(end -> facts.stream()
                         .filter(fact -> end.equals(fact.end()))
                         .toList())
                 .orElseGet(List::of);
 
-        final List<FactWithPeriod> comparatives = maxEnd
+        final List<FactWithPeriod> comparatives = Optional.ofNullable(maxEnd)
                 .map(end -> facts.stream()
                         .filter(fact -> !end.equals(fact.end()))
                         .toList())
@@ -86,7 +96,7 @@ final class FilingFactConverter {
                                         comparative.end(),
                                         comparative.value())
                                 )
-                                .toList()))
+                                .collect(Collectors.toUnmodifiableSet())))
                 .toList();
     }
 

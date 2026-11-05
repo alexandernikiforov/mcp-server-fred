@@ -37,5 +37,5 @@ public interface EdgarService {
 
     Mono<FilingStructure> getFilingStructure(String ticker, String accessionNumber);
 
-    Mono<FilingFactResponse> getFilingFacts(String ticker, String accessionNumber, Set<String> concepts);
+    Mono<FilingFactResponse> getFilingFacts(String ticker, String accessionNumber, Set<Concept> concepts);
 }

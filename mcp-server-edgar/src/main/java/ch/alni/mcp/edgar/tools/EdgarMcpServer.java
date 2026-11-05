@@ -6,6 +6,7 @@ import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.core.Taxonomy;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
+import ch.alni.mcp.edgar.service.FilingFactResponse;
 import ch.alni.mcp.edgar.service.FilingStructure;
 import ch.alni.mcp.edgar.service.SubmissionHistory;
 import ch.alni.mcp.edgar.service.TaxonomyMetadata;
@@ -113,5 +114,21 @@ public class EdgarMcpServer {
             @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
             @McpToolParam(description = "Accession number") String accessionNumber) {
         return edgarService.getFilingStructure(ticker, accessionNumber);
+    }
+
+    @McpTool(name = "get_filing_facts",
+            generateOutputSchema = true,
+            description = "Extracts facts for the provided concepts from the XBRL instance document",
+            annotations = @McpTool.McpAnnotations(
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    readOnlyHint = true,
+                    openWorldHint = false
+            ))
+    public Mono<FilingFactResponse> getFilingFacts(
+            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
+            @McpToolParam(description = "Accession number") String accessionNumber,
+            @McpToolParam(description = "The set of concepts to retrieve the facts from the filings") Set<Concept> concepts) {
+        return edgarService.getFilingFacts(ticker, accessionNumber, concepts);
     }
 }
