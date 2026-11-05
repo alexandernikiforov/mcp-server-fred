@@ -19,7 +19,7 @@ public record FilingFactResponse(List<FilingFact> facts) {
 
     @Builder
     public record Observation(
-            String unitRef,
+            String unit,
             Map<String, String> dimensions,
             PeriodValue reported,
             List<PeriodValue> comparatives

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -111,7 +110,6 @@ class EdgarServiceImpl implements EdgarService {
                 .map(DirectoryResponse::directory)
                 .filter(directory -> directory.containsItem(instancePredicate))
                 .flatMap(directory -> archiveClient.getAccession(cik, accn, directory.getItemName(instancePredicate)))
-                .map(filingFactResolver::parseFiling)
-                .map(instance -> new FilingFactResponse(List.of()));
+                .map(filingFactResolver::parseFiling);
     }
 }

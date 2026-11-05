@@ -1,9 +1,11 @@
 package ch.alni.mcp.edgar.service.impl;
 
+import ch.alni.mcp.edgar.service.FilingFactResponse;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
+import java.util.List;
 
 @Component
 class FilingFactResolver {
@@ -12,7 +14,9 @@ class FilingFactResolver {
             DocumentBuilderFactories.documentBuilderFactory
     );
 
-    XBRLInstanceParser.XBRLInstance parseFiling(String filingInstance) {
-        return instanceParser.parseInstance(new InputSource(new StringReader(filingInstance)));
+    FilingFactResponse parseFiling(String filingInstance) {
+        final XBRLInstanceParser.XBRLInstance xbrlInstance = instanceParser.parseInstance(new InputSource(new StringReader(filingInstance)));
+        final List<FilingFactResponse.FilingFact> filingFacts = FilingFactConverter.toFilingFacts(xbrlInstance);
+        return new FilingFactResponse(filingFacts);
     }
 }

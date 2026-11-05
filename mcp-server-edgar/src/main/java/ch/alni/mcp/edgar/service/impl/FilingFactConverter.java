@@ -14,6 +14,12 @@ import java.util.stream.Collectors;
 import static ch.alni.mcp.edgar.service.impl.Converter.isSamePeriod;
 
 final class FilingFactConverter {
+
+    private static final Map<String, String> STANDARD_UNITS = Map.of(
+            "http://www.xbrl.org/2003/iso4217", "iso4217",
+            "http://www.xbrl.org/2003/instance", "xbrli"
+    );
+
     private FilingFactConverter() {
     }
 
@@ -23,7 +29,7 @@ final class FilingFactConverter {
                             final var context = instance.contexts().get(fact.contextRef());
                             return new FactKey(
                                     fact.concept(),
-                                    fact.unitRef(),
+                                    toUnit(fact.unitRef(), instance.units()),
                                     context.dimensions());
                         },
                         Collectors.mapping(fact -> {
@@ -90,6 +96,38 @@ final class FilingFactConverter {
         return facts.stream()
                 .filter(fact -> isSamePeriod(reported.start(), reported.end(), fact.start(), fact.end()))
                 .toList();
+    }
+
+    static String toUnit(String unitRef, Map<String, XBRLInstance.Unit> units) {
+        final XBRLInstance.Unit unit = units.get(unitRef);
+        if (unit == null) {
+            // fallback although impossible
+            return unitRef;
+        } else {
+            return format(unit);
+        }
+    }
+
+    static String format(XBRLInstance.Unit unit) {
+        final List<String> numerators = unit.numerator().stream()
+                .map(qname -> STANDARD_UNITS.getOrDefault(qname.getNamespaceURI(), qname.toString()) + ":" + qname.getLocalPart())
+                .toList();
+
+        final List<String> denominators = unit.denominator().stream()
+                .map(qname -> STANDARD_UNITS.getOrDefault(qname.getNamespaceURI(), qname.toString()) + ":" + qname.getLocalPart())
+                .toList();
+
+        final String top = String.join("*", numerators);
+
+        if (denominators.isEmpty()) {
+            return top;
+        }
+
+        final String bottom = String.join("*", denominators);
+
+        return (numerators.size() > 1 ? "(" + top + ")" : top)
+                + "/"
+                + (denominators.size() > 1 ? "(" + bottom + ")" : bottom);
     }
 
     private record FactKey(String concept, String unitRef, Map<String, String> dimensions) {

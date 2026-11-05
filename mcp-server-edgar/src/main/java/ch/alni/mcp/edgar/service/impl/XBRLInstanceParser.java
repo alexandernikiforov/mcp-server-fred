@@ -8,17 +8,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class XBRLInstanceParser {
 
@@ -49,15 +46,24 @@ public class XBRLInstanceParser {
         return LocalDate.parse(dates.item(0).getTextContent().strip());
     }
 
-    public XBRLInstance parseInstance(InputSource inputSource) {
-        try {
-            final DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-            final Document document = builder.parse(inputSource);
-            final List<XBRLInstance.Fact> facts = getFacts(document);
-            final Map<String, XBRLInstance.Context> contexts = getContextMap(document);
-            return new XBRLInstance(contexts, facts);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new IllegalStateException("Cannot parse company XSD stream", e);
+    private static QName resolveQName(Element element) {
+        final String value = element.getTextContent().strip();
+        final String qualifiedName = value.trim();
+        final int separator = qualifiedName.indexOf(':');
+
+        final String prefix = separator < 0
+                ? ""
+                : qualifiedName.substring(0, separator);
+
+        final String localName = separator < 0
+                ? qualifiedName
+                : qualifiedName.substring(separator + 1);
+
+        final String namespaceUri = element.lookupNamespaceURI(prefix.isEmpty() ? null : prefix);
+        if (namespaceUri == null) {
+            return new QName(XMLConstants.NULL_NS_URI, localName);
+        } else {
+            return new QName(namespaceUri, localName, prefix);
         }
     }
 
@@ -146,6 +152,19 @@ public class XBRLInstanceParser {
         return Collections.unmodifiableMap(contexts);
     }
 
+    public XBRLInstance parseInstance(InputSource inputSource) {
+        try {
+            final DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+            final Document document = builder.parse(inputSource);
+            final List<XBRLInstance.Fact> facts = getFacts(document);
+            final Map<String, XBRLInstance.Context> contexts = getContextMap(document);
+            final Map<String, XBRLInstance.Unit> units = getUnitMap(document);
+            return new XBRLInstance(contexts, units, facts);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new IllegalStateException("Cannot parse company XSD stream", e);
+        }
+    }
+
     private Map<String, String> getDimensions(Element context) {
         final Map<String, String> dimensions = new HashMap<>();
         final NodeList members = context.getElementsByTagNameNS(
@@ -162,6 +181,55 @@ public class XBRLInstanceParser {
         return Collections.unmodifiableMap(dimensions);
     }
 
+    private Map<String, XBRLInstance.Unit> getUnitMap(Document document) {
+        final Map<String, XBRLInstance.Unit> units = new HashMap<>();
+        final NodeList elements = document.getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "unit");
+        for (int i = 0; i < elements.getLength(); i++) {
+            final Element element = (Element) elements.item(i);
+
+            final String id = element.getAttributeNS(null, "id");
+
+            final Element divide = (Element) element
+                    .getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "divide")
+                    .item(0);
+
+            if (divide == null) {
+                units.put(id, new XBRLInstance.Unit(id, getMeasures(element), List.of()));
+
+            } else {
+                final NodeList numerators = divide
+                        .getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "unitNumerator");
+
+                final List<QName> numeratorQNames = new ArrayList<>();
+                for (int j = 0; j < numerators.getLength(); j++) {
+                    final Element numerator = (Element) numerators.item(j);
+                    numeratorQNames.addAll(getMeasures(numerator));
+                }
+
+                final NodeList denominators = divide
+                        .getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "unitDenominator");
+
+                final List<QName> denominatorQNames = new ArrayList<>();
+                for (int j = 0; j < denominators.getLength(); j++) {
+                    final Element denominator = (Element) denominators.item(j);
+                    denominatorQNames.addAll(getMeasures(denominator));
+                }
+                units.put(id, new XBRLInstance.Unit(id, numeratorQNames, denominatorQNames));
+            }
+        }
+        return Collections.unmodifiableMap(units);
+    }
+
+    private List<QName> getMeasures(Element parent) {
+        final NodeList measures = parent.getElementsByTagNameNS(XBRLNamespaces.XBRL_INSTANCE_NS, "measure");
+        final List<QName> qnames = new ArrayList<>();
+        for (int j = 0; j < measures.getLength(); j++) {
+            final Element measure = (Element) measures.item(j);
+            qnames.add(resolveQName(measure));
+        }
+        return qnames;
+    }
+
     /**
      * XBRLInstance as a parsed structure.
      *
@@ -170,6 +238,7 @@ public class XBRLInstanceParser {
      */
     public record XBRLInstance(
             Map<String, Context> contexts,
+            Map<String, Unit> units,
             List<Fact> facts
     ) {
         /**
@@ -203,6 +272,13 @@ public class XBRLInstanceParser {
                 @Nullable LocalDate endDate,
                 @Nullable LocalDate instant,
                 Map<String, String> dimensions
+        ) {
+        }
+
+        public record Unit(
+                String id,
+                List<QName> numerator,
+                List<QName> denominator
         ) {
         }
     }

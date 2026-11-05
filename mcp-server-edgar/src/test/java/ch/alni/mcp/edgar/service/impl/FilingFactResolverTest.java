@@ -27,10 +27,10 @@ class FilingFactResolverTest {
     @Test
     void testResolve() throws IOException {
         final String contentAsString = instanceXml.getContentAsString(StandardCharsets.UTF_8);
-        final XBRLInstanceParser.XBRLInstance instance = resolver.parseFiling(contentAsString);
+        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString);
 
-        assertThat(instance).isNotNull();
-        final List<FilingFactResponse.FilingFact> filingFacts = FilingFactConverter.toFilingFacts(instance)
+        assertThat(factResponse).isNotNull();
+        final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
                 .stream()
                 .filter(filingFact -> filingFact.concept().equals("baba:PaymentsToAcquireLandUseRightsPropertyAndEquipment"))
                 .toList();
