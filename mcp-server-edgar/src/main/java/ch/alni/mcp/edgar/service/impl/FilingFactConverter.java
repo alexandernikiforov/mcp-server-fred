@@ -6,13 +6,11 @@ import ch.alni.mcp.edgar.service.impl.XBRLInstanceParser.XBRLInstance;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static ch.alni.mcp.edgar.service.impl.Converter.isSamePeriod;
 
 final class FilingFactConverter {
 
@@ -25,6 +23,7 @@ final class FilingFactConverter {
     }
 
     static List<FilingFactResponse.FilingFact> toFilingFacts(XBRLInstance instance, Set<Concept> concepts) {
+        // facts grouped together by (concept, unit, dimensions)
         final Map<FactKey, List<FactWithPeriod>> groupedFacts = instance.facts().stream()
                 .filter(fact -> concepts.contains(Concept.of(fact.concept())))
                 .collect(Collectors.groupingBy(fact -> {
@@ -44,14 +43,11 @@ final class FilingFactConverter {
                             );
                         }, Collectors.toList())));
 
-        // find the maximum end value
-        final LocalDate maxEnd = instance.documentPeriodEndDate();
-
         return groupedFacts.entrySet().stream()
                 .collect(Collectors.groupingBy(
                         entry -> entry.getKey().concept(),
-                        Collectors.flatMapping(
-                                entry -> toObservations(entry.getKey(), entry.getValue(), maxEnd).stream(),
+                        Collectors.mapping(
+                                entry -> toObservation(entry.getKey(), entry.getValue()),
                                 Collectors.toList())))
                 .entrySet().stream()
                 .map(entry -> new FilingFactResponse.FilingFact(
@@ -60,42 +56,19 @@ final class FilingFactConverter {
                 .toList();
     }
 
-    static List<FilingFactResponse.Observation> toObservations(FactKey factKey, List<FactWithPeriod> facts, LocalDate maxEnd) {
-        if (facts.isEmpty()) {
-            return List.of();
-        }
-
-        final List<FactWithPeriod> latestFacts = Optional.ofNullable(maxEnd)
-                .map(end -> facts.stream()
-                        .filter(fact -> end.equals(fact.end()))
-                        .toList())
-                .orElseGet(List::of);
-
-        final List<FactWithPeriod> comparatives = Optional.ofNullable(maxEnd)
-                .map(end -> facts.stream()
-                        .filter(fact -> !end.equals(fact.end()))
-                        .toList())
-                .orElseGet(List::of);
-
-        return latestFacts.stream()
-                .map(latestFact -> new FilingFactResponse.Observation(
-                        factKey.unitRef(),
-                        factKey.dimensions(),
-                        new FilingFactResponse.PeriodValue(latestFact.start(), latestFact.end(), latestFact.value()),
-                        selectComparatives(latestFact, comparatives).stream()
-                                .map(comparative -> new FilingFactResponse.PeriodValue(
-                                        comparative.start(),
-                                        comparative.end(),
-                                        comparative.value())
-                                )
-                                .collect(Collectors.toUnmodifiableSet())))
-                .toList();
-    }
-
-    static List<FactWithPeriod> selectComparatives(FactWithPeriod reported, List<FactWithPeriod> facts) {
-        return facts.stream()
-                .filter(fact -> isSamePeriod(reported.start(), reported.end(), fact.start(), fact.end()))
-                .toList();
+    static FilingFactResponse.Observation toObservation(FactKey factKey, List<FactWithPeriod> facts) {
+        return new FilingFactResponse.Observation(
+                factKey.unitRef(),
+                factKey.dimensions(),
+                facts.stream()
+                        .sorted(Comparator.comparing(FactWithPeriod::end))
+                        .map(fact -> new FilingFactResponse.PeriodValue(
+                                fact.start(),
+                                fact.end(),
+                                fact.value())
+                        )
+                        .distinct()
+                        .collect(Collectors.toList()));
     }
 
     static String toUnit(String unitRef, Map<String, XBRLInstance.Unit> units) {
