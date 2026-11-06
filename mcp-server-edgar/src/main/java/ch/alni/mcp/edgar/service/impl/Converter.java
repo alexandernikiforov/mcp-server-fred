@@ -2,21 +2,27 @@ package ch.alni.mcp.edgar.service.impl;
 
 
 import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.core.ReportingPeriod;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import ch.alni.mcp.edgar.service.SubmissionHistory.Submission;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ch.alni.mcp.edgar.service.ConceptFilingHistory.*;
+import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Filing;
+import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Observation;
+import static ch.alni.mcp.edgar.service.ConceptFilingHistory.PeriodValue;
 
 final class Converter {
     private static final Set<String> SUPPORTED_FORMS = Set.of(
@@ -143,47 +149,15 @@ final class Converter {
                                         comparative.end(),
                                         comparative.val())
                                 )
+                                .sorted(Comparator.comparing(PeriodValue::end))
                                 .toList()))
                 .toList();
     }
 
     static List<CompanyFact> selectComparatives(CompanyFact reported, List<CompanyFact> companyFacts) {
         return companyFacts.stream()
-                .filter(fact -> isSamePeriod(reported.start(), reported.end(), fact.start(), fact.end()))
+                .filter(fact -> ReportingPeriod.isSamePeriod(reported.start(), reported.end(), fact.start(), fact.end()))
                 .toList();
-    }
-
-    static boolean isSamePeriod(@Nullable LocalDate start,
-                                @NonNull LocalDate end,
-                                @Nullable LocalDate otherStart,
-                                @NonNull LocalDate otherEnd) {
-
-        final ReportingPeriod reportingPeriod = classifyPeriod(start, end);
-        final ReportingPeriod otherReportingPeriod = classifyPeriod(otherStart, otherEnd);
-        return reportingPeriod == otherReportingPeriod;
-    }
-
-    static ReportingPeriod classifyPeriod(@Nullable LocalDate start, @NonNull LocalDate end) {
-        if (start == null) {
-            return ReportingPeriod.UNSPECIFIED;
-        }
-
-        long days = ChronoUnit.DAYS.between(start, end) + 1;
-
-        if (days >= 80 && days <= 100) {
-            return ReportingPeriod.ONE_QUARTER;
-        }
-        if (days >= 170 && days <= 195) {
-            return ReportingPeriod.TWO_QUARTERS;
-        }
-        if (days >= 260 && days <= 285) {
-            return ReportingPeriod.THREE_QUARTERS;
-        }
-        if (days >= 350 && days <= 380) {
-            return ReportingPeriod.ONE_YEAR;
-        }
-
-        return ReportingPeriod.UNSPECIFIED;
     }
 
     static List<Submission> toSubmissions(CompanySubmissionsResponse response, int latestSubmissions) {
@@ -198,14 +172,6 @@ final class Converter {
                         filings.primaryDocument().get(i)
                 ))
                 .toList();
-    }
-
-    enum ReportingPeriod {
-        UNSPECIFIED,
-        ONE_QUARTER,
-        TWO_QUARTERS,
-        THREE_QUARTERS,
-        ONE_YEAR
     }
 
     record FactKey(String accn, int fy, String fp, String form, LocalDate filed) {

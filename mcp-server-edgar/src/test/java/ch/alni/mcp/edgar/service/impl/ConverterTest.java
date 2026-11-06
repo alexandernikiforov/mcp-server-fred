@@ -1,6 +1,7 @@
 package ch.alni.mcp.edgar.service.impl;
 
 import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.core.ReportingPeriod;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
 import org.junit.jupiter.api.Test;
@@ -40,47 +41,47 @@ class ConverterTest {
 
     @Test
     void testClassifyPeriod() {
-        assertThat(Converter.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2026-06-27")))
-                .isEqualTo(Converter.ReportingPeriod.THREE_QUARTERS);
-        assertThat(Converter.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2026-03-28")))
-                .isEqualTo(Converter.ReportingPeriod.TWO_QUARTERS);
-        assertThat(Converter.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2025-12-27")))
-                .isEqualTo(Converter.ReportingPeriod.ONE_QUARTER);
-        assertThat(Converter.classifyPeriod(LocalDate.parse("2024-09-29"), LocalDate.parse("2025-09-27")))
-                .isEqualTo(Converter.ReportingPeriod.ONE_YEAR);
+        assertThat(ReportingPeriod.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2026-06-27")))
+                .isEqualTo(ReportingPeriod.THREE_QUARTERS);
+        assertThat(ReportingPeriod.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2026-03-28")))
+                .isEqualTo(ReportingPeriod.TWO_QUARTERS);
+        assertThat(ReportingPeriod.classifyPeriod(LocalDate.parse("2025-09-28"), LocalDate.parse("2025-12-27")))
+                .isEqualTo(ReportingPeriod.ONE_QUARTER);
+        assertThat(ReportingPeriod.classifyPeriod(LocalDate.parse("2024-09-29"), LocalDate.parse("2025-09-27")))
+                .isEqualTo(ReportingPeriod.ONE_YEAR);
 
-        assertThat(Converter.classifyPeriod(null, LocalDate.parse("2025-09-27")))
-                .isEqualTo(Converter.ReportingPeriod.UNSPECIFIED);
+        assertThat(ReportingPeriod.classifyPeriod(null, LocalDate.parse("2025-09-27")))
+                .isEqualTo(ReportingPeriod.UNSPECIFIED);
     }
 
     @Test
     void testIsSamePeriod() {
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 LocalDate.parse("2023-10-01"), LocalDate.parse("2024-09-28"),
                 LocalDate.parse("2024-09-29"), LocalDate.parse("2025-09-27")
         )).isTrue();
 
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 LocalDate.parse("2026-03-29"), LocalDate.parse("2026-06-27"),
                 LocalDate.parse("2025-03-30"), LocalDate.parse("2025-06-28")
         )).isTrue();
 
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 LocalDate.parse("2025-09-28"), LocalDate.parse("2026-06-27"),
                 LocalDate.parse("2024-09-29"), LocalDate.parse("2025-06-28")
         )).isTrue();
 
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 null, LocalDate.parse("2026-06-27"),
                 LocalDate.parse("2024-09-29"), LocalDate.parse("2025-06-28")
         )).isFalse();
 
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 null, LocalDate.parse("2026-06-27"),
                 null, LocalDate.parse("2025-06-28")
         )).isTrue();
 
-        assertThat(Converter.isSamePeriod(
+        assertThat(ReportingPeriod.isSamePeriod(
                 LocalDate.parse("2026-03-29"), LocalDate.parse("2026-06-27"),
                 LocalDate.parse("2024-09-29"), LocalDate.parse("2025-06-28")
         )).isFalse();
