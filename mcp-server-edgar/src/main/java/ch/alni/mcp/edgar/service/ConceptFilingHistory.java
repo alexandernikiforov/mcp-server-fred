@@ -1,5 +1,6 @@
 package ch.alni.mcp.edgar.service;
 
+import ch.alni.mcp.edgar.core.ReportingPeriod;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
@@ -23,7 +24,7 @@ public record ConceptFilingHistory(String taxonomy, String tag, String descripti
     }
 
     @Builder
-    public record Observation(String unit, PeriodValue reported, List<PeriodValue> comparatives) {
+    public record Observation(String unit, ReportingPeriod period, List<PeriodValue> values) {
     }
 
     public record PeriodValue(

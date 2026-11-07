@@ -121,45 +121,34 @@ final class Converter {
             return Collections.emptyList();
         }
 
-        // find the maximum end value
-        final Optional<LocalDate> maxEnd = companyFacts.stream()
-                .map(CompanyFact::end)
-                .max(Comparator.naturalOrder());
+        final Map<ReportingPeriod, List<CompanyFact>> factsByPeriod =
+                companyFacts.stream()
+                        .collect(Collectors.groupingBy(
+                                fact -> ReportingPeriod.classifyPeriod(fact.start(), fact.end())
+                        ));
 
-        final List<CompanyFact> latestFacts = maxEnd
-                .map(end -> companyFacts.stream()
-                        .filter(fact -> end.equals(fact.end()))
-                        .toList())
-                .orElseGet(List::of);
-
-        final List<CompanyFact> comparatives = maxEnd
-                .map(end -> companyFacts.stream()
-                        .filter(fact -> !end.equals(fact.end()))
-                        .toList())
-                .orElseGet(List::of);
-
-        return latestFacts.stream()
-                .map(latestFact -> new Observation(
+        return factsByPeriod.entrySet().stream()
+                .map(entry -> new Observation(
                         unit,
-                        new PeriodValue(latestFact.start(), latestFact.end(), latestFact.val()),
-                        selectComparatives(latestFact, comparatives).stream()
-                                .map(comparative -> new PeriodValue(
-                                        comparative.start(),
-                                        comparative.end(),
-                                        comparative.val())
+                        entry.getKey(),
+                        entry.getValue().stream()
+                                .map(fact -> new PeriodValue(
+                                        fact.start(),
+                                        fact.end(),
+                                        fact.val()
+                                ))
+                                .sorted(Comparator.comparing(PeriodValue::end)
+                                        .thenComparing(
+                                                PeriodValue::start,
+                                                Comparator.nullsFirst(Comparator.naturalOrder()))
                                 )
-                                .sorted(Comparator.comparing(PeriodValue::end))
-                                .toList()))
+                                .toList()
+                ))
                 .toList();
+
     }
 
-    static List<CompanyFact> selectComparatives(CompanyFact reported, List<CompanyFact> companyFacts) {
-        return companyFacts.stream()
-                .filter(fact -> ReportingPeriod.isSamePeriod(reported.start(), reported.end(), fact.start(), fact.end()))
-                .toList();
-    }
-
-    static List<Filing> toSubmissions(CompanySubmissionsResponse response, int latestSubmissions) {
+    static List<Filing> toFilings(CompanySubmissionsResponse response, int latestSubmissions) {
         final CompanySubmissionsResponse.RecentFilings filings = response.filings().recent();
         return IntStream.range(0, filings.form().size())
                 .filter(i -> SUPPORTED_FORMS.contains(filings.form().get(i)))

@@ -51,7 +51,7 @@ class ConverterTest {
                 .isEqualTo(ReportingPeriod.ONE_YEAR);
 
         assertThat(ReportingPeriod.classifyPeriod(null, LocalDate.parse("2025-09-27")))
-                .isEqualTo(ReportingPeriod.UNSPECIFIED);
+                .isEqualTo(ReportingPeriod.INSTANT);
     }
 
     @Test

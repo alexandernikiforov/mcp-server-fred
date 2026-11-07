@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
  */
 public enum ReportingPeriod {
     UNSPECIFIED,
+    INSTANT,
     ONE_QUARTER,
     TWO_QUARTERS,
     THREE_QUARTERS,
@@ -28,7 +29,7 @@ public enum ReportingPeriod {
 
     public static ReportingPeriod classifyPeriod(@Nullable LocalDate start, @NonNull LocalDate end) {
         if (start == null) {
-            return UNSPECIFIED;
+            return INSTANT;
         }
 
         long days = ChronoUnit.DAYS.between(start, end) + 1;

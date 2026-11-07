@@ -67,7 +67,7 @@ class EdgarServiceImpl implements EdgarService {
         }
 
         return dataClient.getCompanySubmissions(cik)
-                .flatMap(response -> Flux.fromIterable(Converter.toSubmissions(response, latestSubmissions))
+                .flatMap(response -> Flux.fromIterable(Converter.toFilings(response, latestSubmissions))
                         .collectList()
                         .map(FilingHistory::new)
                 );
