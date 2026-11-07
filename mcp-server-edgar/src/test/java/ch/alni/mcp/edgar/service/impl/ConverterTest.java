@@ -33,7 +33,7 @@ class ConverterTest {
         final CompanyFactsResponse response = jsonMapper.readValue(facts.getInputStream(), CompanyFactsResponse.class);
 
         final Optional<ConceptFilingHistory> reportedHistory = Converter
-                .toReportedHistory(response, Concept.of("us-gaap:NetIncomeLoss"), 3);
+                .toReportedHistory(response, Concept.of("us-gaap:Revenues"), 3);
 
         assertThat(reportedHistory).isPresent();
 

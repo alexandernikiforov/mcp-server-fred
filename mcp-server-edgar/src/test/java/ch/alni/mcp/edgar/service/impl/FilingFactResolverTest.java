@@ -26,6 +26,9 @@ class FilingFactResolverTest {
     @Value("classpath:/responses/aapl-20260926_htm.xml")
     private Resource aaplInstanceXml;
 
+    @Value("classpath:/responses/aapl-20180929.xml")
+    private Resource aaplOldInstanceXml;
+
     @Autowired
     private FilingFactResolver resolver;
 
@@ -61,6 +64,23 @@ class FilingFactResolverTest {
         assertThat(filingFacts).hasSize(1);
         assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);
         assertThat(filingFacts.getFirst().observations()).hasSize(13);
+    }
+
+    @Test
+    void testResolveOnOldAapl() throws IOException {
+        final String contentAsString = aaplOldInstanceXml.getContentAsString(StandardCharsets.UTF_8);
+        final String concept = "us-gaap:Revenues";
+
+        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
+
+        assertThat(factResponse).isNotNull();
+        final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
+                .stream()
+                .toList();
+
+        assertThat(filingFacts).hasSize(1);
+        assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);
+        assertThat(filingFacts.getFirst().observations()).hasSize(17);
     }
 
 }
