@@ -1,14 +1,14 @@
 package ch.alni.mcp.edgar.tools;
 
 
-import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.core.Taxonomy;
+import ch.alni.mcp.edgar.service.Concept;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
+import ch.alni.mcp.edgar.service.FilingHistory;
 import ch.alni.mcp.edgar.service.FilingStructure;
-import ch.alni.mcp.edgar.service.SubmissionHistory;
 import ch.alni.mcp.edgar.service.TaxonomyMetadata;
 import ch.alni.mcp.edgar.service.TaxonomyService;
 import org.springframework.ai.mcp.annotation.McpTool;
@@ -47,88 +47,115 @@ public class EdgarMcpServer {
         return Mono.just("ok");
     }
 
-    @McpTool(description = "Returns the CIK for the given ticker", annotations = @McpTool.McpAnnotations(
-            destructiveHint = false,
-            idempotentHint = true,
-            readOnlyHint = true,
-            openWorldHint = false
-    ))
-    public Mono<Long> resolveCik(String ticker) {
+    @McpTool(name = "resolve_cik",
+            description = """
+                    Resolves a US stock ticker symbol to the company's SEC Central Index Key (CIK).
+                    Use when the company's SEC identifier is needed.
+                    """,
+            annotations = @McpTool.McpAnnotations(
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    readOnlyHint = true,
+                    openWorldHint = false
+            ))
+    public Mono<Long> resolveCik(
+            @McpToolParam(description = "SEC-listed company ticker symbol (e.g., AAPL, MSFT)") String ticker) {
         return Mono.just(edgarService.resolveCik(ticker));
     }
 
     @McpTool(name = "get_concept_metadata",
             generateOutputSchema = true,
-            description = "Returns metadata for the given taxonomy and concept, including description",
+            description = """
+                    Returns US-GAAP taxonomy metadata for an XBRL concept,
+                    including its documentation, data type, period type, and balance type.
+                    Use to understand the accounting meaning and reporting characteristics of a concept before interpreting its values.
+                    """,
             annotations = @McpTool.McpAnnotations(
                     destructiveHint = false,
                     idempotentHint = true,
                     readOnlyHint = true,
                     openWorldHint = false
             ))
-    public Mono<TaxonomyMetadata> getConceptMetadata(Taxonomy taxonomy, String concept) {
+    public Mono<TaxonomyMetadata> getConceptMetadata(
+            @McpToolParam(description = "A supported taxonomy") Taxonomy taxonomy,
+            @McpToolParam(description = "The concept such as 'Revenues'") String concept) {
         return Mono.justOrEmpty(taxonomyService.getConceptMetadata(taxonomy, concept));
     }
 
-    @McpTool(name = "get_concept_filing_history",
+    @McpTool(name = "get_concept_history",
             generateOutputSchema = true,
-            description = "Returns history of filings for the given concepts for the specified company",
+            description = """
+                    Returns filing-level historical values for specified XBRL concepts reported by a company.
+                    Includes reported and comparative periods, filing dates, accession numbers, fiscal years, and fiscal periods.
+                    Use to analyze financial trends and compare values reported for the same period across different filings.
+                    """,
             annotations = @McpTool.McpAnnotations(
                     destructiveHint = false,
                     idempotentHint = true,
-                    readOnlyHint = true,
-                    openWorldHint = false
+                    readOnlyHint = true
             ))
-    public Mono<ConceptFilingHistoryResponse> getConceptFilingHistory(
-            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
-            @McpToolParam(description = "The set of concepts to retrieve the history of filings") Set<Concept> concepts,
-            @McpToolParam(description = "How many fiscal years to include in the history") FiscalYearCountType fiscalYearCount) {
+    public Mono<ConceptFilingHistoryResponse> getConceptHistory(
+            @McpToolParam(description = "SEC-listed company ticker symbol (e.g., AAPL, MSFT)") String ticker,
+            @McpToolParam(description = "XBRL concepts identified by taxonomy and tag.") Set<Concept> concepts,
+            @McpToolParam(description = """
+                    Number of fiscal years to include, counting the current fiscal year. This is not the number of filings.
+                    """) FiscalYearCountType fiscalYearCount) {
         return edgarService.getReportedHistory(ticker, concepts, fiscalYearCount);
     }
 
-    @McpTool(name = "get_latest_submissions",
+    @McpTool(name = "get_recent_filings",
             generateOutputSchema = true,
-            description = "Returns N specified latest submission descriptions, including accession number and primary document",
+            description = """
+                    Lists the most recent supported SEC financial filings for a company,
+                    including form type, filing date, report date, accession number, and primary document.
+                    Supports forms 10-K, 10-Q, and 20-F.
+                    Use to locate a filing before retrieving its structure or facts.
+                    """,
             annotations = @McpTool.McpAnnotations(
                     destructiveHint = false,
                     idempotentHint = true,
-                    readOnlyHint = true,
-                    openWorldHint = false
+                    readOnlyHint = true
             ))
-    public Mono<SubmissionHistory> getSubmissionHistory(
-            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
-            @McpToolParam(description = "How many submissions to fetch") int latestSubmissions) {
-        return edgarService.getSubmissionHistory(ticker, latestSubmissions);
+    public Mono<FilingHistory> getRecentFilings(
+            @McpToolParam(description = "SEC-listed company ticker symbol (e.g., AAPL, MSFT)") String ticker,
+            @McpToolParam(description = "Maximum number of recent supported filings to return") int limit) {
+        return edgarService.getFilingHistory(ticker, limit);
     }
 
     @McpTool(name = "get_filing_structure",
             generateOutputSchema = true,
-            description = "Returns the concept structure of the filing with the given accession number",
+            description = """
+                    Returns the XBRL presentation structure of a specific company filing,
+                    organized into reporting sections and hierarchical concept nodes.
+                    Use to discover which concepts appear in financial statements and disclosures before requesting their values.
+                    """,
             annotations = @McpTool.McpAnnotations(
                     destructiveHint = false,
                     idempotentHint = true,
-                    readOnlyHint = true,
-                    openWorldHint = false
+                    readOnlyHint = true
             ))
     public Mono<FilingStructure> getFilingStructure(
-            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
-            @McpToolParam(description = "Accession number") String accessionNumber) {
+            @McpToolParam(description = "SEC-listed company ticker symbol (e.g., AAPL, MSFT)") String ticker,
+            @McpToolParam(description = "SEC accession number identifying a specific filing.") String accessionNumber) {
         return edgarService.getFilingStructure(ticker, accessionNumber);
     }
 
     @McpTool(name = "get_filing_facts",
             generateOutputSchema = true,
-            description = "Extracts facts for the provided concepts from the XBRL instance document",
+            description = """
+                    Extracts XBRL facts for specified concepts from a single company filing identified by its accession number.
+                    Returns values, reporting periods, units, and dimensional contexts.
+                    Use for detailed analysis of a specific 10-K, 10-Q, or 20-F filing, including dimension-specific facts.
+                    """,
             annotations = @McpTool.McpAnnotations(
                     destructiveHint = false,
                     idempotentHint = true,
-                    readOnlyHint = true,
-                    openWorldHint = false
+                    readOnlyHint = true
             ))
     public Mono<FilingFactResponse> getFilingFacts(
-            @McpToolParam(description = "The company's ticker such as AAPL") String ticker,
-            @McpToolParam(description = "Accession number") String accessionNumber,
-            @McpToolParam(description = "The set of concepts to retrieve the facts from the filings") Set<Concept> concepts) {
+            @McpToolParam(description = "SEC-listed company ticker symbol (e.g., AAPL, MSFT)") String ticker,
+            @McpToolParam(description = "SEC accession number identifying a specific filing.") String accessionNumber,
+            @McpToolParam(description = "XBRL concepts whose facts should be extracted from the specified filing.") Set<Concept> concepts) {
         return edgarService.getFilingFacts(ticker, accessionNumber, concepts);
     }
 }

@@ -1,15 +1,15 @@
 package ch.alni.mcp.edgar.service.impl;
 
-import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import ch.alni.mcp.edgar.port.DirectoryResponse;
 import ch.alni.mcp.edgar.port.EdgarArchiveClient;
 import ch.alni.mcp.edgar.port.EdgarDataClient;
+import ch.alni.mcp.edgar.service.Concept;
 import ch.alni.mcp.edgar.service.ConceptFilingHistoryResponse;
 import ch.alni.mcp.edgar.service.EdgarService;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
+import ch.alni.mcp.edgar.service.FilingHistory;
 import ch.alni.mcp.edgar.service.FilingStructure;
-import ch.alni.mcp.edgar.service.SubmissionHistory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -60,7 +60,7 @@ class EdgarServiceImpl implements EdgarService {
     }
 
     @Override
-    public Mono<SubmissionHistory> getSubmissionHistory(String ticker, int latestSubmissions) {
+    public Mono<FilingHistory> getFilingHistory(String ticker, int latestSubmissions) {
         final Long cik = tickerResolver.resolve(ticker);
         if (cik == null) {
             return Mono.error(new IllegalArgumentException("CIK not found for " + ticker));
@@ -69,7 +69,7 @@ class EdgarServiceImpl implements EdgarService {
         return dataClient.getCompanySubmissions(cik)
                 .flatMap(response -> Flux.fromIterable(Converter.toSubmissions(response, latestSubmissions))
                         .collectList()
-                        .map(SubmissionHistory::new)
+                        .map(FilingHistory::new)
                 );
     }
 

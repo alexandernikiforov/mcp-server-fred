@@ -1,6 +1,6 @@
 package ch.alni.mcp.edgar.service.impl;
 
-import ch.alni.mcp.edgar.core.Concept;
+import ch.alni.mcp.edgar.service.Concept;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

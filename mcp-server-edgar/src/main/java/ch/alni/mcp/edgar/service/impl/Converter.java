@@ -1,13 +1,13 @@
 package ch.alni.mcp.edgar.service.impl;
 
 
-import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.ReportingPeriod;
 import ch.alni.mcp.edgar.port.CompanyFact;
 import ch.alni.mcp.edgar.port.CompanyFactsResponse;
 import ch.alni.mcp.edgar.port.CompanySubmissionsResponse;
+import ch.alni.mcp.edgar.service.Concept;
 import ch.alni.mcp.edgar.service.ConceptFilingHistory;
-import ch.alni.mcp.edgar.service.SubmissionHistory.Submission;
+import ch.alni.mcp.edgar.service.FilingHistory.Filing;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Filing;
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.Observation;
 import static ch.alni.mcp.edgar.service.ConceptFilingHistory.PeriodValue;
 
@@ -54,7 +53,7 @@ final class Converter {
         ));
     }
 
-    static List<Filing> toFilings(CompanyFactsResponse.FactDefinition factDefinition, int fiscalYearCount) {
+    static List<ConceptFilingHistory.Filing> toFilings(CompanyFactsResponse.FactDefinition factDefinition, int fiscalYearCount) {
         // list of observations grouped by fact key under the same unit
         final List<Map<FactKey, List<Observation>>> observations =
                 factDefinition.units().entrySet().stream()
@@ -107,8 +106,8 @@ final class Converter {
                 .toList();
     }
 
-    static Filing toFiling(FactKey factKey, List<Observation> observations) {
-        return new Filing(
+    static ConceptFilingHistory.Filing toFiling(FactKey factKey, List<Observation> observations) {
+        return new ConceptFilingHistory.Filing(
                 factKey.accn(),
                 factKey.form(),
                 factKey.fp(),
@@ -160,14 +159,15 @@ final class Converter {
                 .toList();
     }
 
-    static List<Submission> toSubmissions(CompanySubmissionsResponse response, int latestSubmissions) {
+    static List<Filing> toSubmissions(CompanySubmissionsResponse response, int latestSubmissions) {
         final CompanySubmissionsResponse.RecentFilings filings = response.filings().recent();
         return IntStream.range(0, filings.form().size())
                 .filter(i -> SUPPORTED_FORMS.contains(filings.form().get(i)))
                 .limit(latestSubmissions)
-                .mapToObj(i -> new Submission(
+                .mapToObj(i -> new Filing(
                         filings.accessionNumber().get(i),
                         filings.filingDate().get(i),
+                        LocalDate.parse(filings.reportDate().get(i)),
                         filings.form().get(i),
                         filings.primaryDocument().get(i)
                 ))

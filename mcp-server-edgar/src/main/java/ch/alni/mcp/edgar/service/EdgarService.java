@@ -1,6 +1,5 @@
 package ch.alni.mcp.edgar.service;
 
-import ch.alni.mcp.edgar.core.Concept;
 import ch.alni.mcp.edgar.core.FiscalYearCountType;
 import reactor.core.publisher.Mono;
 
@@ -31,9 +30,9 @@ public interface EdgarService {
      *
      * @param ticker            The ticker symbol of the company for which the submission history is being requested.
      * @param latestSubmissions The number of the most recent submissions to retrieve.
-     * @return A {@link Mono} emitting the {@link SubmissionHistory} containing the requested submission details.
+     * @return A {@link Mono} emitting the {@link FilingHistory} containing the requested submission details.
      */
-    Mono<SubmissionHistory> getSubmissionHistory(String ticker, int latestSubmissions);
+    Mono<FilingHistory> getFilingHistory(String ticker, int latestSubmissions);
 
     Mono<FilingStructure> getFilingStructure(String ticker, String accessionNumber);
 
