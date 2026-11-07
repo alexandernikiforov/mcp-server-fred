@@ -1,6 +1,7 @@
 package ch.alni.mcp.edgar.service.impl;
 
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,8 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class XBRLInstanceParser {
+    private static final Logger LOG = getLogger(XBRLInstanceParser.class);
 
     private final DocumentBuilderFactory documentBuilderFactory;
 
@@ -169,18 +174,32 @@ public class XBRLInstanceParser {
         return Collections.unmodifiableMap(contexts);
     }
 
-    public XBRLInstance parseInstance(InputSource inputSource) {
+    private boolean isXBRLInstance(Document document) {
+        final Element root = document.getDocumentElement();
+
+        return root != null
+                && "xbrl".equals(root.getLocalName())
+                && XBRLNamespaces.XBRL_INSTANCE_NS.equals(root.getNamespaceURI());
+    }
+
+    public Optional<XBRLInstance> parseXBRLInstance(InputSource inputSource) {
         try {
             final DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             final Document document = builder.parse(inputSource);
+
+            if (!isXBRLInstance(document)) {
+                return Optional.empty();
+            }
+
             final List<XBRLInstance.Fact> facts = getFacts(document);
             final Map<String, XBRLInstance.Context> contexts = getContextMap(document);
             final Map<String, XBRLInstance.Unit> units = getUnitMap(document);
             final LocalDate documentPeriodEndDate = getDocumentPeriodEndDate(document);
-            return new XBRLInstance(documentPeriodEndDate, contexts, units, facts);
+            return Optional.of(new XBRLInstance(documentPeriodEndDate, contexts, units, facts));
         }
         catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new IllegalStateException("Cannot parse company XSD stream", e);
+            LOG.error("Cannot parse content as an XML file", e);
+            return Optional.empty();
         }
     }
 

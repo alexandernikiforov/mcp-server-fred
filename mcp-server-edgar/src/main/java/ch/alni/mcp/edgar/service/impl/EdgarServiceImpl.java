@@ -10,16 +10,21 @@ import ch.alni.mcp.edgar.service.EdgarService;
 import ch.alni.mcp.edgar.service.FilingFactResponse;
 import ch.alni.mcp.edgar.service.FilingHistory;
 import ch.alni.mcp.edgar.service.FilingStructure;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 class EdgarServiceImpl implements EdgarService {
+    private static final Logger LOG = getLogger(EdgarServiceImpl.class);
 
     private final EdgarDataClient dataClient;
     private final EdgarArchiveClient archiveClient;
@@ -107,13 +112,27 @@ class EdgarServiceImpl implements EdgarService {
         }
 
         final Predicate<DirectoryResponse.Item> instancePredicate = item ->
-                item.name().toLowerCase(Locale.ROOT).contains("_htm.xml");
+                item.name().toLowerCase(Locale.ROOT).endsWith(".xml");
 
         final String accn = accessionNumber.replace("-", "");
         return archiveClient.getDirectory(cik, accn)
                 .map(DirectoryResponse::directory)
-                .filter(directory -> directory.containsItem(instancePredicate))
-                .flatMap(directory -> archiveClient.getAccession(cik, accn, directory.getItemName(instancePredicate)))
-                .map(instance -> filingFactResolver.parseFiling(instance, concepts));
+                .flatMapIterable(directory -> directory.getItemNames(instancePredicate))
+                .concatMap(itemName -> archiveClient.getAccession(cik, accn, itemName)
+                        .flatMap(instance -> {
+                            final Optional<FilingFactResponse> result =
+                                    filingFactResolver.parseFiling(instance, concepts);
+
+                            if (result.isEmpty()) {
+                                LOG.debug("Skipping file {}: no suitable XBRL instance result", itemName);
+                            }
+
+                            return Mono.justOrEmpty(result);
+                        })
+                )
+                .next()
+                .switchIfEmpty(Mono.error(
+                        new IllegalArgumentException("No suitable XBRL instance found for accession " + accessionNumber)
+                ));
     }
 }

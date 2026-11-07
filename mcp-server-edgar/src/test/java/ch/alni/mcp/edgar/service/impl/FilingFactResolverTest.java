@@ -11,6 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,12 +38,14 @@ class FilingFactResolverTest {
         final String contentAsString = babaInstanceXml.getContentAsString(StandardCharsets.UTF_8);
         final String concept = "baba:PaymentsToAcquireLandUseRightsPropertyAndEquipment";
 
-        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
+        final Optional<FilingFactResponse> factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
 
-        assertThat(factResponse).isNotNull();
-        final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
-                .stream()
-                .toList();
+        assertThat(factResponse).isNotEmpty();
+
+        final List<FilingFactResponse.FilingFact> filingFacts = factResponse
+                .map(response -> response.facts().stream()
+                        .toList())
+                .orElse(List.of());
 
         assertThat(filingFacts).hasSize(1);
         assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);
@@ -54,12 +57,15 @@ class FilingFactResolverTest {
         final String contentAsString = aaplInstanceXml.getContentAsString(StandardCharsets.UTF_8);
         final String concept = "us-gaap:MarketableSecuritiesCurrent";
 
-        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
+        final Optional<FilingFactResponse> factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
 
-        assertThat(factResponse).isNotNull();
-        final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
-                .stream()
-                .toList();
+        assertThat(factResponse).isNotEmpty();
+
+        final List<FilingFactResponse.FilingFact> filingFacts = factResponse
+                .map(response -> response.facts().stream()
+                        .toList())
+                .orElse(List.of());
+
 
         assertThat(filingFacts).hasSize(1);
         assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);
@@ -71,12 +77,13 @@ class FilingFactResolverTest {
         final String contentAsString = aaplOldInstanceXml.getContentAsString(StandardCharsets.UTF_8);
         final String concept = "us-gaap:Revenues";
 
-        final FilingFactResponse factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
+        final Optional<FilingFactResponse> factResponse = resolver.parseFiling(contentAsString, Set.of(Concept.of(concept)));
 
-        assertThat(factResponse).isNotNull();
-        final List<FilingFactResponse.FilingFact> filingFacts = factResponse.facts()
-                .stream()
-                .toList();
+        assertThat(factResponse).isNotEmpty();
+        final List<FilingFactResponse.FilingFact> filingFacts = factResponse
+                .map(response -> response.facts().stream()
+                        .toList())
+                .orElse(List.of());
 
         assertThat(filingFacts).hasSize(1);
         assertThat(filingFacts.getFirst().concept()).isEqualTo(concept);

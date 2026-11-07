@@ -61,7 +61,11 @@ final class FilingFactConverter {
                 factKey.unitRef(),
                 factKey.dimensions(),
                 facts.stream()
-                        .sorted(Comparator.comparing(FactWithPeriod::end))
+                        .sorted(Comparator.comparing(FactWithPeriod::end)
+                                .thenComparing(
+                                        FactWithPeriod::start,
+                                        Comparator.nullsFirst(Comparator.naturalOrder()))
+                        )
                         .map(fact -> new FilingFactResponse.PeriodValue(
                                 fact.start(),
                                 fact.end(),

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -16,11 +16,9 @@ class FilingFactResolver {
             DocumentBuilderFactories.documentBuilderFactory
     );
 
-    FilingFactResponse parseFiling(String filingInstance, Set<Concept> concepts) {
-        final XBRLInstanceParser.XBRLInstance xbrlInstance = instanceParser.parseInstance(
-                new InputSource(new StringReader(filingInstance))
-        );
-        final List<FilingFactResponse.FilingFact> filingFacts = FilingFactConverter.toFilingFacts(xbrlInstance, concepts);
-        return new FilingFactResponse(filingFacts);
+    Optional<FilingFactResponse> parseFiling(String filingInstance, Set<Concept> concepts) {
+        return instanceParser.parseXBRLInstance(new InputSource(new StringReader(filingInstance)))
+                .map(xbrlInstance -> FilingFactConverter.toFilingFacts(xbrlInstance, concepts))
+                .map(FilingFactResponse::new);
     }
 }

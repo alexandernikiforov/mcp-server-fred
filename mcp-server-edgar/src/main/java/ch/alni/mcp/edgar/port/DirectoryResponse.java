@@ -33,6 +33,13 @@ public record DirectoryResponse(Directory directory) {
                     .orElseThrow();
         }
 
+        public List<String> getItemNames(Predicate<DirectoryResponse.Item> predicate) {
+            return items().stream()
+                    .filter(predicate)
+                    .map(DirectoryResponse.Item::name)
+                    .toList();
+        }
+
         /**
          * Checks if any {@link DirectoryResponse.Item} in the directory satisfies the given predicate.
          *
